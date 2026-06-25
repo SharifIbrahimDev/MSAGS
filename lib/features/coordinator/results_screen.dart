@@ -20,11 +20,10 @@ class ResultsScreen extends ConsumerWidget {
       backgroundColor: const Color(0xFFF8F9FA),
       body: Column(
         children: [
-          AppHeader(
-            title: 'SIWES Results',
-            subtitle: 'MSAGS — Finalize & manage grades',
-            gradientStart: AppTheme.coordinatorColor,
-            gradientEnd: const Color(0xFF7B1FA2),
+          const AppHeader(
+            title: 'Overall Results',
+            subtitle: 'Final SIWES grading sheet',
+            icon: Icons.analytics_rounded,
           ),
           Expanded(
             child: StreamBuilder(

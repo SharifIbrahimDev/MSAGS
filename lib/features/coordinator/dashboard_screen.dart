@@ -22,14 +22,13 @@ class CoordinatorDashboardScreen extends ConsumerWidget {
       body: Column(
         children: [
           AppHeader(
-            title: 'Coordinator — MSAGS',
-            subtitle: 'Welcome, ${currentUser?.name ?? 'Coordinator'}',
-            gradientStart: AppTheme.coordinatorColor,
-            gradientEnd: const Color(0xFF7B1FA2),
+            title: 'SIWES Coordinator Portal',
+            subtitle: currentUser?.name ?? 'Coordinator',
+            icon: Icons.admin_panel_settings_rounded,
             actions: [
               IconButton(
-                icon: const Icon(Icons.logout, color: Colors.white),
-                onPressed: () => _confirmSignOut(context, ref),
+                icon: const Icon(Icons.logout),
+                onPressed: () => ref.read(authServiceProvider).signOut(),
               ),
             ],
           ),
@@ -65,19 +64,19 @@ class CoordinatorDashboardScreen extends ConsumerWidget {
                               title: 'Total Students',
                               value: '$totalStudents',
                               icon: Icons.people_rounded,
-                              color: AppTheme.coordinatorColor,
+                              iconColor: AppTheme.coordinatorColor,
                             ),
                             StatCard(
                               title: 'Finalized',
                               value: '$finalized',
                               icon: Icons.check_circle_rounded,
-                              color: AppTheme.secondary,
+                              iconColor: AppTheme.secondary,
                             ),
                             StatCard(
                               title: 'Supervisor Done',
                               value: '$supervisorDone',
                               icon: Icons.supervisor_account_rounded,
-                              color: AppTheme.supervisorColor,
+                              iconColor: AppTheme.supervisorColor,
                             ),
                             StatCard(
                               title: 'Pending',

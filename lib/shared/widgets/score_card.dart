@@ -28,43 +28,36 @@ class ScoreCard extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.2)),
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE5E7EB)), // gray-200
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
-            style: GoogleFonts.outfit(
-              fontSize: 13,
+            style: GoogleFonts.inter(
+              fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: Colors.grey[600],
+              color: const Color(0xFF4B5563), // gray-600
             ),
           ),
           const SizedBox(height: 8),
           Row(
             children: [
               Text(
-                hasScore ? score!.toStringAsFixed(1) : '--',
-                style: GoogleFonts.outfit(
-                  fontSize: 28,
+                hasScore ? score!.toStringAsFixed(0) : '--',
+                style: GoogleFonts.inter(
+                  fontSize: 24,
                   fontWeight: FontWeight.w700,
-                  color: color,
+                  color: const Color(0xFF111827), // gray-900
                 ),
               ),
               Text(
                 ' / ${maxScore.toStringAsFixed(0)}',
-                style: GoogleFonts.outfit(
+                style: GoogleFonts.inter(
                   fontSize: 16,
-                  color: Colors.grey[400],
+                  color: const Color(0xFF9CA3AF), // gray-400
                 ),
               ),
               if (showGrade && hasScore) ...[
@@ -77,9 +70,9 @@ class ScoreCard extends StatelessWidget {
                   ),
                   child: Text(
                     ScoringService.gradeFromScore(score!),
-                    style: GoogleFonts.outfit(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
                       color: color,
                     ),
                   ),
@@ -87,13 +80,13 @@ class ScoreCard extends StatelessWidget {
               ],
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           ClipRRect(
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: percentage.clamp(0.0, 1.0),
-              minHeight: 6,
-              backgroundColor: color.withOpacity(0.1),
+              minHeight: 8,
+              backgroundColor: const Color(0xFFF3F4F6), // gray-100
               valueColor: AlwaysStoppedAnimation<Color>(color),
             ),
           ),
@@ -107,60 +100,56 @@ class StatCard extends StatelessWidget {
   final String title;
   final String value;
   final IconData icon;
-  final Color color;
+  final Color iconColor;
 
   const StatCard({
     super.key,
     required this.title,
     required this.value,
     required this.icon,
-    required this.color,
+    this.iconColor = const Color(0xFF6B7280), // gray-500
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [color, color.withOpacity(0.7)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE5E7EB)), // gray-200
+        boxShadow: const [
           BoxShadow(
-            color: color.withOpacity(0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
+            color: Color(0x0A000000), // shadow-sm
+            blurRadius: 2,
+            offset: Offset(0, 1),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(icon, color: Colors.white, size: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: const Color(0xFF4B5563), // gray-600
+                ),
+              ),
+              Icon(icon, color: iconColor, size: 20),
+            ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           Text(
             value,
-            style: GoogleFonts.outfit(
-              fontSize: 30,
-              fontWeight: FontWeight.w800,
-              color: Colors.white,
-            ),
-          ),
-          Text(
-            title,
-            style: GoogleFonts.outfit(
-              fontSize: 13,
-              color: Colors.white.withOpacity(0.85),
+            style: GoogleFonts.inter(
+              fontSize: 28,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF111827), // gray-900
             ),
           ),
         ],

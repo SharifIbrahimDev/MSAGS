@@ -5,17 +5,15 @@ import 'package:google_fonts/google_fonts.dart';
 class AppHeader extends StatelessWidget {
   final String title;
   final String? subtitle;
-  final Color gradientStart;
-  final Color gradientEnd;
   final List<Widget>? actions;
+  final IconData? icon;
 
   const AppHeader({
     super.key,
     required this.title,
     this.subtitle,
-    required this.gradientStart,
-    required this.gradientEnd,
     this.actions,
+    this.icon,
   });
 
   @override
@@ -25,47 +23,46 @@ class AppHeader extends StatelessWidget {
         top: MediaQuery.of(context).padding.top + 16,
         left: 20,
         right: 20,
-        bottom: 24,
+        bottom: 16,
       ),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [gradientStart, gradientEnd],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          bottom: BorderSide(color: Color(0xFFE5E7EB), width: 1), // gray-200
         ),
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(28),
-          bottomRight: Radius.circular(28),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: gradientStart.withOpacity(0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
       ),
       child: Row(
         children: [
+          if (icon != null) ...[
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF4F46E5), // indigo-600
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(icon, color: Colors.white, size: 24),
+            ),
+            const SizedBox(width: 12),
+          ],
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.outfit(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
+                  style: GoogleFonts.inter(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF111827), // gray-900
                   ),
                 ),
                 if (subtitle != null) ...[
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 2),
                   Text(
                     subtitle!,
-                    style: GoogleFonts.outfit(
+                    style: GoogleFonts.inter(
                       fontSize: 14,
-                      color: Colors.white.withOpacity(0.8),
+                      color: const Color(0xFF4B5563), // gray-600
                     ),
                   ),
                 ],

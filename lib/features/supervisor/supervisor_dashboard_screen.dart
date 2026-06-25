@@ -25,13 +25,12 @@ class SupervisorDashboardScreen extends ConsumerWidget {
       body: Column(
         children: [
           AppHeader(
-            title: 'Supervisor — MSAGS',
-            subtitle: 'SIWES Evaluation | ${currentUser.name}',
-            gradientStart: AppTheme.supervisorColor,
-            gradientEnd: const Color(0xFF0D47A1),
+            title: 'SIWES Supervisor Portal',
+            subtitle: currentUser.name,
+            icon: Icons.business_center_rounded,
             actions: [
               IconButton(
-                icon: const Icon(Icons.logout, color: Colors.white),
+                icon: const Icon(Icons.logout),
                 onPressed: () => ref.read(authServiceProvider).signOut(),
               ),
             ],

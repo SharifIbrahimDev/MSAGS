@@ -25,13 +25,12 @@ class AssessorDashboardScreen extends ConsumerWidget {
       body: Column(
         children: [
           AppHeader(
-            title: 'Assessor — MSAGS',
-            subtitle: 'SIWES Assessment | ${currentUser.name}',
-            gradientStart: AppTheme.assessorColor,
-            gradientEnd: const Color(0xFF1B5E20),
+            title: 'SIWES Assessor Portal',
+            subtitle: currentUser.name,
+            icon: Icons.assignment_ind_rounded,
             actions: [
               IconButton(
-                icon: const Icon(Icons.logout, color: Colors.white),
+                icon: const Icon(Icons.logout),
                 onPressed: () => ref.read(authServiceProvider).signOut(),
               ),
             ],

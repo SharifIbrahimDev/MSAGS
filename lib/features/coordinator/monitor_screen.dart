@@ -19,11 +19,10 @@ class MonitorScreen extends ConsumerWidget {
       backgroundColor: const Color(0xFFF8F9FA),
       body: Column(
         children: [
-          AppHeader(
-            title: 'Submission Monitor',
-            subtitle: 'MSAGS — Real-time SIWES tracking',
-            gradientStart: AppTheme.coordinatorColor,
-            gradientEnd: const Color(0xFF7B1FA2),
+          const AppHeader(
+            title: 'Monitor Assessment',
+            subtitle: 'Track assessment progress for all students',
+            icon: Icons.monitor_heart_rounded,
           ),
           Expanded(
             child: StreamBuilder(

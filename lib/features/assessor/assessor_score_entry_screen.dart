@@ -133,51 +133,38 @@ class _AssessorScoreEntryScreenState
 
                       // Preview card
                       Container(
-                        padding: const EdgeInsets.all(20),
+                        padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              AppTheme.assessorColor,
-                              AppTheme.assessorColor.withOpacity(0.7),
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppTheme.assessorColor.withOpacity(0.3),
-                              blurRadius: 16,
-                              offset: const Offset(0, 6),
-                            ),
-                          ],
+                          color: const Color(0xFFEEF2FF), // indigo-50
+                          border: Border.all(color: const Color(0xFFC7D2FE)), // indigo-200
+                          borderRadius: BorderRadius.circular(8),
                         ),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Assessor Score Preview',
-                                style: GoogleFonts.outfit(
-                                    fontSize: 14, color: Colors.white70)),
-                            Text(
-                              '${_preview.toStringAsFixed(0)} / 40',
-                              style: GoogleFonts.outfit(
-                                fontSize: 42,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white,
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Total Assessor Score',
+                                    style: GoogleFonts.inter(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: const Color(0xFF111827))),
+                                Text(
+                                  '${_preview.toStringAsFixed(0)} / 40',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w700,
+                                    color: const Color(0xFF4F46E5), // indigo-600
+                                  ),
+                                ),
+                              ],
                             ),
+                            const SizedBox(height: 4),
                             Text(
-                              '(${(_oral + _attitudinal + _display).toStringAsFixed(0)} / 40 raw marks)',
-                              style: GoogleFonts.outfit(
-                                  fontSize: 13, color: Colors.white60),
-                            ),
-                            const SizedBox(height: 12),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(4),
-                              child: LinearProgressIndicator(
-                                value: (_preview / 40).clamp(0.0, 1.0),
-                                minHeight: 8,
-                                backgroundColor: Colors.white.withOpacity(0.2),
-                                valueColor:
-                                    const AlwaysStoppedAnimation(Colors.white),
-                              ),
+                              '40% of final evaluation',
+                              style: GoogleFonts.inter(
+                                  fontSize: 12, color: const Color(0xFF4B5563)),
                             ),
                           ],
                         ),
