@@ -1,0 +1,100 @@
+// firestore.rules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helper Functions ──────────────────────────────────────────────────────
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function getRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    function isCoordinator() {
+      return isAuthenticated() && getRole() == 'coordinator';
+    }
+
+    function isSupervisor() {
+      return isAuthenticated() && getRole() == 'supervisor';
+    }
+
+    function isAssessor() {
+      return isAuthenticated() && getRole() == 'assessor';
+    }
+
+    // ── Users Collection ──────────────────────────────────────────────────────
+    match /users/{uid} {
+      // Users can read their own profile; coordinators can read all
+      allow read: if isAuthenticated() && (request.auth.uid == uid || isCoordinator());
+      // Only coordinator can create/update user profiles
+      allow write: if isCoordinator();
+    }
+
+    // ── Students Collection ───────────────────────────────────────────────────
+    match /students/{studentId} {
+      // Coordinator: full access
+      allow read, write: if isCoordinator();
+
+      // Supervisor: read students assigned to them
+      allow read: if isSupervisor() &&
+        resource.data.supervisorId == request.auth.uid;
+
+      // Assessor: read students where their UID is in assessorIds
+      allow read: if isAssessor() &&
+        request.auth.uid in resource.data.assessorIds;
+    }
+
+    // ── Supervisor Evaluations ────────────────────────────────────────────────
+    match /supervisor_evaluations/{studentId} {
+      // Coordinator: read all
+      allow read: if isCoordinator();
+      // Coordinator: unlock (set isLocked = false)
+      allow update: if isCoordinator();
+
+      // Supervisor: read and write only their own submission
+      // Cannot write if isLocked == true (re-submit protection)
+      allow read: if isSupervisor() &&
+        resource.data.supervisorId == request.auth.uid;
+
+      allow create: if isSupervisor() &&
+        request.resource.data.supervisorId == request.auth.uid;
+
+      allow update: if isSupervisor() &&
+        resource.data.supervisorId == request.auth.uid &&
+        resource.data.isLocked == false;
+
+      // Assessors: cannot read supervisor evaluations
+    }
+
+    // ── Assessor Evaluations ──────────────────────────────────────────────────
+    match /assessor_evaluations/{studentId}/assessors/{assessorId} {
+      // Coordinator: read all
+      allow read: if isCoordinator();
+      // Coordinator: unlock
+      allow update: if isCoordinator();
+
+      // Assessors: read/write only their own submission
+      allow read, create: if isAssessor() &&
+        request.auth.uid == assessorId;
+
+      allow update: if isAssessor() &&
+        request.auth.uid == assessorId &&
+        resource.data.isLocked == false;
+
+      // Supervisors: cannot read individual assessor scores
+    }
+
+    // ── Results Collection ────────────────────────────────────────────────────
+    match /results/{studentId} {
+      // Coordinator: full read/write (finalize, unlock)
+      allow read, write: if isCoordinator();
+
+      // Supervisor: read result for assigned students
+      allow read: if isSupervisor();
+
+      // Assessors: cannot read results
+    }
+  }
+}
