@@ -95,7 +95,7 @@ class _AssignAssessorsScreenState
               // Counter banner
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                color: AppTheme.assessorColor.withOpacity(0.05),
+                color: AppTheme.assessorColor.withValues(alpha: 0.05),
                 child: Row(
                   children: [
                     Icon(Icons.info_outline,
@@ -135,7 +135,7 @@ class _AssignAssessorsScreenState
                       margin: const EdgeInsets.only(bottom: 10),
                       decoration: BoxDecoration(
                         color: selected
-                            ? AppTheme.assessorColor.withOpacity(0.08)
+                            ? AppTheme.assessorColor.withValues(alpha: 0.08)
                             : maxReached
                                 ? Colors.grey[50]
                                 : Colors.white,
@@ -173,7 +173,7 @@ class _AssignAssessorsScreenState
                                     : Colors.grey[500])),
                         secondary: CircleAvatar(
                           backgroundColor: selected
-                              ? AppTheme.assessorColor.withOpacity(0.2)
+                              ? AppTheme.assessorColor.withValues(alpha: 0.2)
                               : Colors.grey[100],
                           child: Text(
                             a.name.isNotEmpty ? a.name[0].toUpperCase() : '?',

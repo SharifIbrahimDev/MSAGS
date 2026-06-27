@@ -8,6 +8,7 @@ class AppTheme {
   static const Color background = Color(0xFFF9FAFB); // gray-50
   static const Color surface = Colors.white;
   static const Color error = Color(0xFFEA4335);
+  static const Color warning = Color(0xFFF59E0B); // amber-500
 
   // Role Colors
   static const Color coordinatorColor = primary;
@@ -37,7 +38,7 @@ class AppTheme {
         color: Colors.black87,
       ),
     ),
-    cardTheme: const CardTheme(
+    cardTheme: const CardThemeData(
       color: surface,
       elevation: 0,
       margin: EdgeInsets.zero,

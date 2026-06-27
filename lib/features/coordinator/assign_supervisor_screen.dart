@@ -104,7 +104,7 @@ class _AssignSupervisorScreenState
                       margin: const EdgeInsets.only(bottom: 10),
                       decoration: BoxDecoration(
                         color: selected
-                            ? AppTheme.supervisorColor.withOpacity(0.08)
+                            ? AppTheme.supervisorColor.withValues(alpha: 0.08)
                             : Colors.white,
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
@@ -128,7 +128,7 @@ class _AssignSupervisorScreenState
                                 GoogleFonts.outfit(color: Colors.grey[500])),
                         secondary: CircleAvatar(
                           backgroundColor:
-                              AppTheme.supervisorColor.withOpacity(0.1),
+                              AppTheme.supervisorColor.withValues(alpha: 0.1),
                           child: Text(
                             sup.name.isNotEmpty
                                 ? sup.name[0].toUpperCase()

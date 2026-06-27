@@ -17,7 +17,7 @@ class SupervisorShell extends StatelessWidget {
       bottomNavigationBar: NavigationBar(
         selectedIndex: selectedIndex,
         backgroundColor: Colors.white,
-        indicatorColor: AppTheme.supervisorColor.withOpacity(0.12),
+        indicatorColor: AppTheme.supervisorColor.withValues(alpha: 0.12),
         destinations: [
           NavigationDestination(
             icon: const Icon(Icons.people_outline),

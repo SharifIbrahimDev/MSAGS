@@ -13,7 +13,7 @@ class AssessorShell extends StatelessWidget {
       bottomNavigationBar: NavigationBar(
         selectedIndex: 0,
         backgroundColor: Colors.white,
-        indicatorColor: AppTheme.assessorColor.withOpacity(0.12),
+        indicatorColor: AppTheme.assessorColor.withValues(alpha: 0.12),
         destinations: [
           NavigationDestination(
             icon: const Icon(Icons.people_outline),

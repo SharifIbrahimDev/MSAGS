@@ -243,7 +243,7 @@ class _AssessorSlider extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.15)),
+        border: Border.all(color: color.withValues(alpha: 0.15)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -258,7 +258,7 @@ class _AssessorSlider extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -276,8 +276,8 @@ class _AssessorSlider extends StatelessWidget {
             data: SliderThemeData(
               activeTrackColor: color,
               thumbColor: color,
-              inactiveTrackColor: color.withOpacity(0.15),
-              overlayColor: color.withOpacity(0.1),
+              inactiveTrackColor: color.withValues(alpha: 0.15),
+              overlayColor: color.withValues(alpha: 0.1),
             ),
             child: Slider(
               value: value,

@@ -92,7 +92,7 @@ class AssessorDashboardScreen extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(16),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.04),
+                                color: Colors.black.withValues(alpha: 0.04),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -103,7 +103,7 @@ class AssessorDashboardScreen extends ConsumerWidget {
                               CircleAvatar(
                                 radius: 24,
                                 backgroundColor:
-                                    AppTheme.assessorColor.withOpacity(0.1),
+                                    AppTheme.assessorColor.withValues(alpha: 0.1),
                                 child: Text(
                                   s.name.isNotEmpty
                                       ? s.name[0].toUpperCase()

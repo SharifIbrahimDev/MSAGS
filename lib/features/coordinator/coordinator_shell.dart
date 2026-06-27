@@ -2,8 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../../core/providers.dart';
 import '../../core/app_theme.dart';
 
 class CoordinatorShell extends ConsumerWidget {
@@ -23,7 +21,7 @@ class CoordinatorShell extends ConsumerWidget {
       bottomNavigationBar: NavigationBar(
         selectedIndex: selectedIndex,
         backgroundColor: Colors.white,
-        indicatorColor: AppTheme.coordinatorColor.withOpacity(0.12),
+        indicatorColor: AppTheme.coordinatorColor.withValues(alpha: 0.12),
         onDestinationSelected: (i) {
           switch (i) {
             case 0: context.go('/coordinator');

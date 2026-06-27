@@ -72,7 +72,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.15),
+                      color: Colors.white.withValues(alpha: 0.15),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
@@ -96,7 +96,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     'Mobile SIWES Assessment & Grading System',
                     style: GoogleFonts.outfit(
                       fontSize: 13,
-                      color: Colors.white.withOpacity(0.75),
+                      color: Colors.white.withValues(alpha: 0.75),
                       letterSpacing: 0.5,
                     ),
                     textAlign: TextAlign.center,
@@ -111,7 +111,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       borderRadius: BorderRadius.circular(24),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.15),
+                          color: Colors.black.withValues(alpha: 0.15),
                           blurRadius: 30,
                           offset: const Offset(0, 10),
                         ),
@@ -186,7 +186,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             Container(
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: AppTheme.error.withOpacity(0.08),
+                                color: AppTheme.error.withValues(alpha: 0.08),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Row(
@@ -230,7 +230,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             'Contact your institution coordinator if you need access.',
                     style: GoogleFonts.outfit(
                       fontSize: 13,
-                      color: Colors.white.withOpacity(0.7),
+                      color: Colors.white.withValues(alpha: 0.7),
                     ),
                     textAlign: TextAlign.center,
                   ),

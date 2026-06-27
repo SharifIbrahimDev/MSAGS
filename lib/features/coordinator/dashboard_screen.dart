@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/providers.dart';
-import '../../core/firestore_service.dart';
 import '../../core/app_theme.dart';
 import '../../shared/widgets/app_header.dart';
 import '../../shared/widgets/score_card.dart';
@@ -82,7 +81,7 @@ class CoordinatorDashboardScreen extends ConsumerWidget {
                               title: 'Pending',
                               value: '$pending',
                               icon: Icons.pending_actions_rounded,
-                              color: AppTheme.warning,
+                              iconColor: AppTheme.warning,
                             ),
                           ],
                         ),
@@ -143,26 +142,6 @@ class CoordinatorDashboardScreen extends ConsumerWidget {
       ),
     );
   }
-
-  void _confirmSignOut(BuildContext context, WidgetRef ref) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Sign Out'),
-        content: const Text('Are you sure you want to sign out?'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ref.read(authServiceProvider).signOut();
-            },
-            child: const Text('Sign Out', style: TextStyle(color: Colors.red)),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class _ActionCard extends StatelessWidget {
@@ -192,14 +171,14 @@ class _ActionCard extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: color.withOpacity(0.15)),
+            border: Border.all(color: color.withValues(alpha: 0.15)),
           ),
           child: Row(
             children: [
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(icon, color: color, size: 24),

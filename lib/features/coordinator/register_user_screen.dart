@@ -117,9 +117,9 @@ class _RegisterUserScreenState extends ConsumerState<RegisterUserScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: _roleColor.withOpacity(0.08),
+                  color: _roleColor.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: _roleColor.withOpacity(0.2)),
+                  border: Border.all(color: _roleColor.withValues(alpha: 0.2)),
                 ),
                 child: Text(
                   _selectedRole == UserRole.supervisor
@@ -227,7 +227,7 @@ class _RoleChip extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: color),
           boxShadow: selected
-              ? [BoxShadow(color: color.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 4))]
+              ? [BoxShadow(color: color.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 4))]
               : [],
         ),
         child: Text(

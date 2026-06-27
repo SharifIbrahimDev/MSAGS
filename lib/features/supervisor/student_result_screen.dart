@@ -55,13 +55,13 @@ class SupervisorStudentResultScreen extends ConsumerWidget {
                           gradient: LinearGradient(
                             colors: [
                               _gradeColor(grade),
-                              _gradeColor(grade).withOpacity(0.7)
+                              _gradeColor(grade).withValues(alpha: 0.7)
                             ],
                           ),
                           borderRadius: BorderRadius.circular(24),
                           boxShadow: [
                             BoxShadow(
-                              color: _gradeColor(grade).withOpacity(0.3),
+                              color: _gradeColor(grade).withValues(alpha: 0.3),
                               blurRadius: 16,
                               offset: const Offset(0, 8),
                             ),
