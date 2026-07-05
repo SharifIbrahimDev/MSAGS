@@ -14,18 +14,6 @@ class SupervisorShell extends StatelessWidget {
 
     return Scaffold(
       body: child,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: selectedIndex,
-        backgroundColor: Colors.white,
-        indicatorColor: AppTheme.supervisorColor.withValues(alpha: 0.12),
-        destinations: [
-          NavigationDestination(
-            icon: const Icon(Icons.people_outline),
-            selectedIcon: Icon(Icons.people, color: AppTheme.supervisorColor),
-            label: 'My Students',
-          ),
-        ],
-      ),
     );
   }
 }

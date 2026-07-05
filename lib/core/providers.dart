@@ -1,4 +1,4 @@
-// lib/core/providers.dart
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'firestore_service.dart';
@@ -51,18 +51,28 @@ class AuthService {
     required String password,
     required UserRole role,
   }) async {
-    final cred = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-      email: email.trim(),
-      password: password,
+    // Use a temporary Firebase App so we don't log out the current user!
+    FirebaseApp tempApp = await Firebase.initializeApp(
+      name: 'tempAppForCreation_${DateTime.now().millisecondsSinceEpoch}',
+      options: Firebase.app().options,
     );
-    final user = AppUser(
-      uid: cred.user!.uid,
-      name: name,
-      email: email.trim(),
-      role: role,
-    );
-    await _firestoreService.createUser(user);
-    return user;
+
+    try {
+      final cred = await FirebaseAuth.instanceFor(app: tempApp).createUserWithEmailAndPassword(
+        email: email.trim(),
+        password: password,
+      );
+      final user = AppUser(
+        uid: cred.user!.uid,
+        name: name,
+        email: email.trim(),
+        role: role,
+      );
+      await _firestoreService.createUser(user);
+      return user;
+    } finally {
+      await tempApp.delete();
+    }
   }
 
   Future<void> signOut() async {

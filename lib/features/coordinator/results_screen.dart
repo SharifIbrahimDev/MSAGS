@@ -32,19 +32,47 @@ class ResultsScreen extends ConsumerWidget {
                 return StreamBuilder(
                   stream: fs.allResultsStream(),
                   builder: (context, resultSnap) {
-                    if (!studentSnap.hasData || !resultSnap.hasData) {
+                    if (studentSnap.hasError) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Text('Error loading students: ${studentSnap.error}',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.outfit(color: Colors.red)),
+                        ),
+                      );
+                    }
+                    if (resultSnap.hasError) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Text('Error loading results: ${resultSnap.error}',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.outfit(color: Colors.red)),
+                        ),
+                      );
+                    }
+                    if ((studentSnap.connectionState == ConnectionState.waiting && !studentSnap.hasData) || 
+                        (resultSnap.connectionState == ConnectionState.waiting && !resultSnap.hasData)) {
                       return const Center(child: CircularProgressIndicator());
                     }
-                    final students = studentSnap.data!;
+                    final students = studentSnap.data ?? [];
                     final results = {
-                      for (final r in resultSnap.data!) r.studentId: r
+                      for (final r in (resultSnap.data ?? [])) r.studentId: r
                     };
 
                     if (students.isEmpty) {
                       return Center(
-                        child: Text('No students registered.',
-                            style:
-                                GoogleFonts.outfit(color: Colors.grey[500])),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.analytics_outlined,
+                                size: 64, color: Colors.grey[300]),
+                            const SizedBox(height: 12),
+                            Text('No students registered yet.',
+                                style: GoogleFonts.outfit(color: Colors.grey[500])),
+                          ],
+                        ),
                       );
                     }
 

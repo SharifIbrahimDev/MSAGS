@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../core/providers.dart';
 import '../../core/models/app_user.dart';
 import '../../core/app_theme.dart';
+import '../../shared/utils/error_utils.dart';
 
 class RegisterUserScreen extends ConsumerStatefulWidget {
   const RegisterUserScreen({super.key});
@@ -56,7 +57,7 @@ class _RegisterUserScreenState extends ConsumerState<RegisterUserScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: ${_friendlyError(e.toString())}'),
+            content: Text(getFriendlyError(e)),
             backgroundColor: AppTheme.error,
           ),
         );
@@ -66,11 +67,7 @@ class _RegisterUserScreenState extends ConsumerState<RegisterUserScreen> {
     }
   }
 
-  String _friendlyError(String raw) {
-    if (raw.contains('email-already-in-use')) return 'Email already registered.';
-    if (raw.contains('weak-password')) return 'Password too weak (min 6 chars).';
-    return 'Registration failed. Please try again.';
-  }
+  // removed _friendlyError
 
   @override
   Widget build(BuildContext context) {

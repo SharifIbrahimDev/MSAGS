@@ -28,10 +28,20 @@ class MonitorScreen extends ConsumerWidget {
             child: StreamBuilder(
               stream: fs.studentsStream(),
               builder: (context, studentSnap) {
-                if (!studentSnap.hasData) {
+                if (studentSnap.hasError) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Text('Error loading students: ${studentSnap.error}',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.outfit(color: Colors.red)),
+                    ),
+                  );
+                }
+                if (studentSnap.connectionState == ConnectionState.waiting && !studentSnap.hasData) {
                   return const Center(child: CircularProgressIndicator());
                 }
-                final students = studentSnap.data!;
+                final students = studentSnap.data ?? [];
                 if (students.isEmpty) {
                   return Center(
                     child: Column(
@@ -50,6 +60,16 @@ class MonitorScreen extends ConsumerWidget {
                 return StreamBuilder(
                   stream: fs.allResultsStream(),
                   builder: (context, resultSnap) {
+                    if (resultSnap.hasError) {
+                      return Center(
+                        child: Text('Error loading results: ${resultSnap.error}',
+                            style: GoogleFonts.outfit(color: Colors.red)),
+                      );
+                    }
+                    if (resultSnap.connectionState == ConnectionState.waiting && !resultSnap.hasData) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+
                     final results = {
                       for (final r in (resultSnap.data ?? [])) r.studentId: r
                     };

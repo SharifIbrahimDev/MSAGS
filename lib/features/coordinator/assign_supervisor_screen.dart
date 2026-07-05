@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../core/providers.dart';
 import '../../core/models/app_user.dart';
 import '../../core/app_theme.dart';
+import '../../shared/utils/error_utils.dart';
 
 class AssignSupervisorScreen extends ConsumerStatefulWidget {
   final String studentId;
@@ -45,7 +46,7 @@ class _AssignSupervisorScreenState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: AppTheme.error),
+          SnackBar(content: Text(getFriendlyError(e)), backgroundColor: AppTheme.error),
         );
       }
     } finally {
@@ -66,10 +67,20 @@ class _AssignSupervisorScreenState
             .read(firestoreServiceProvider)
             .getUsersByRole(UserRole.supervisor),
         builder: (context, snap) {
-          if (!snap.hasData) {
+          if (snap.hasError) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(getFriendlyError(snap.error),
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.outfit(color: AppTheme.error)),
+              ),
+            );
+          }
+          if (snap.connectionState == ConnectionState.waiting && !snap.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
-          final supervisors = snap.data!;
+          final supervisors = snap.data ?? [];
           if (supervisors.isEmpty) {
             return Center(
               child: Column(

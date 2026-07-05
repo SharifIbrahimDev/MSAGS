@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/providers.dart';
 import '../../core/models/student.dart';
 import '../../core/app_theme.dart';
+import '../../shared/utils/error_utils.dart';
 
 class RegisterStudentScreen extends ConsumerStatefulWidget {
   const RegisterStudentScreen({super.key});
@@ -55,7 +56,7 @@ class _RegisterStudentScreenState extends ConsumerState<RegisterStudentScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: AppTheme.error),
+          SnackBar(content: Text(getFriendlyError(e)), backgroundColor: AppTheme.error),
         );
       }
     } finally {

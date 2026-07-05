@@ -28,8 +28,8 @@ service cloud.firestore {
     match /users/{uid} {
       // Users can read their own profile; coordinators can read all
       allow read: if isAuthenticated() && (request.auth.uid == uid || isCoordinator());
-      // Only coordinator can create/update user profiles
-      allow write: if isCoordinator();
+      // Only coordinator can create/update ANY user profile. Users can create/update their own profile.
+      allow write: if isCoordinator() || (isAuthenticated() && request.auth.uid == uid);
     }
 
     // ── Students Collection ───────────────────────────────────────────────────

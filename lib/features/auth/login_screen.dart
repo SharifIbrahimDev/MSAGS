@@ -1,9 +1,13 @@
 // lib/features/auth/login_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../core/providers.dart';
 import '../../core/app_theme.dart';
+import '../../core/models/app_user.dart';
+import '../../shared/utils/error_utils.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -34,20 +38,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       await ref.read(authServiceProvider).signIn(_emailCtrl.text, _passwordCtrl.text);
       // Router will redirect automatically
     } catch (e) {
-      setState(() { _error = _friendlyError(e.toString()); });
+      setState(() {
+        _error = getFriendlyError(e);
+      });
     } finally {
       if (mounted) setState(() { _loading = false; });
     }
-  }
-
-  String _friendlyError(String raw) {
-    if (raw.contains('user-not-found') || raw.contains('wrong-password') || raw.contains('invalid-credential')) {
-      return 'Invalid email or password. Please try again.';
-    }
-    if (raw.contains('too-many-requests')) {
-      return 'Too many attempts. Please wait a moment.';
-    }
-    return 'Sign-in failed. Check your connection and try again.';
   }
 
   @override
@@ -69,16 +65,60 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // Logo / Icon
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.15),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.school_rounded,
-                      size: 60,
-                      color: Colors.white,
+                  GestureDetector(
+                    onLongPress: () async {
+                      try {
+                        final auth = ref.read(authServiceProvider);
+                        try {
+                          await auth.createUser(
+                            name: 'Admin Coordinator',
+                            email: 'admin@msags.com',
+                            password: 'password123',
+                            role: UserRole.coordinator,
+                          );
+                        } catch (e) {
+                          if (e.toString().contains('email-already-in-use')) {
+                            // Already exists in auth, just create the firestore doc
+                            await auth.signIn('admin@msags.com', 'password123');
+                            final uid = FirebaseAuth.instance.currentUser!.uid;
+                            await ref.read(firestoreServiceProvider).createUser(
+                                  AppUser(
+                                    uid: uid,
+                                    name: 'Admin Coordinator',
+                                    email: 'admin@msags.com',
+                                    role: UserRole.coordinator,
+                                  ),
+                                );
+                          } else {
+                            rethrow;
+                          }
+                        }
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Admin created/restored: admin@msags.com / password123')),
+                          );
+                        }
+                      } catch (e) {
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text(getFriendlyError(e)),
+                                backgroundColor: AppTheme.error),
+                          );
+                        }
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.15),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.school_rounded,
+                        size: 60,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 24),

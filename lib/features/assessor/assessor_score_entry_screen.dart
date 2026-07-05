@@ -7,6 +7,7 @@ import '../../core/providers.dart';
 import '../../core/models/evaluation.dart';
 import '../../core/scoring_service.dart';
 import '../../core/app_theme.dart';
+import '../../shared/utils/error_utils.dart';
 
 class AssessorScoreEntryScreen extends ConsumerStatefulWidget {
   final String studentId;
@@ -62,7 +63,7 @@ class _AssessorScoreEntryScreenState
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: AppTheme.error),
+          SnackBar(content: Text(getFriendlyError(e)), backgroundColor: AppTheme.error),
         );
       }
     } finally {
@@ -87,6 +88,16 @@ class _AssessorScoreEntryScreenState
                   .watch(firestoreServiceProvider)
                   .assessorEvalStream(widget.studentId, currentUser.uid),
               builder: (context, snap) {
+                if (snap.hasError) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Text(getFriendlyError(snap.error),
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.outfit(color: AppTheme.error)),
+                    ),
+                  );
+                }
                 // Pre-populate with existing scores
                 if (snap.hasData && snap.data != null && !_prepopulated) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
