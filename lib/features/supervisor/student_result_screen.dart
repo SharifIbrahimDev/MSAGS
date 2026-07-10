@@ -35,9 +35,9 @@ class SupervisorStudentResultScreen extends ConsumerWidget {
               }
 
               final finalScore = result?.finalScore;
-              final grade = finalScore != null
+              final grade = result?.grade ?? (finalScore != null
                   ? ScoringService.gradeFromScore(finalScore)
-                  : null;
+                  : null);
               final remark = grade != null
                   ? ScoringService.remarkFromGrade(grade)
                   : null;

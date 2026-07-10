@@ -103,6 +103,7 @@ class SupervisorDashboardScreen extends ConsumerWidget {
 
                         return Container(
                           margin: const EdgeInsets.only(bottom: 12),
+                          padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(16),
@@ -114,64 +115,83 @@ class SupervisorDashboardScreen extends ConsumerWidget {
                               ),
                             ],
                           ),
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 10),
-                            leading: CircleAvatar(
-                              radius: 24,
-                              backgroundColor:
-                                  AppTheme.supervisorColor.withValues(alpha: 0.1),
-                              child: Text(
-                                s.name.isNotEmpty
-                                    ? s.name[0].toUpperCase()
-                                    : '?',
-                                style: GoogleFonts.outfit(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppTheme.supervisorColor,
-                                ),
-                              ),
-                            ),
-                            title: Text(s.name,
-                                style: GoogleFonts.outfit(
-                                    fontWeight: FontWeight.w600)),
-                            subtitle: Text(
-                                '${s.matricNo} • ${s.department}',
-                                style: GoogleFonts.outfit(
-                                    fontSize: 12, color: Colors.grey[500])),
-                            trailing: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                StatusBadge(status: status),
-                                const SizedBox(height: 4),
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    TextButton(
-                                      onPressed: (isLocked && hasSubmitted)
-                                          ? null
-                                          : () => context.go(
-                                              '/supervisor/score/${s.id}'),
-                                      child: Text(
-                                          hasSubmitted ? 'Edit' : 'Score',
-                                          style: GoogleFonts.outfit(
-                                              fontSize: 12)),
-                                    ),
-                                    if (hasSubmitted)
-                                      TextButton(
-                                        onPressed: () => context.go(
-                                            '/supervisor/result/${s.id}'),
-                                        child: Text('View',
-                                            style: GoogleFonts.outfit(
-                                                fontSize: 12,
-                                                color:
-                                                    AppTheme.supervisorColor)),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CircleAvatar(
+                                    radius: 24,
+                                    backgroundColor: AppTheme.supervisorColor
+                                        .withValues(alpha: 0.1),
+                                    child: Text(
+                                      s.name.isNotEmpty
+                                          ? s.name[0].toUpperCase()
+                                          : '?',
+                                      style: GoogleFonts.outfit(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppTheme.supervisorColor,
                                       ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          s.name,
+                                          style: GoogleFonts.outfit(
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Text(
+                                          '${s.matricNo} • ${s.department}',
+                                          style: GoogleFonts.outfit(
+                                            fontSize: 12,
+                                            color: Colors.grey[500],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  StatusBadge(status: status),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  TextButton(
+                                    onPressed: (isLocked && hasSubmitted)
+                                        ? null
+                                        : () => context.go(
+                                            '/supervisor/score/${s.id}'),
+                                    child: Text(
+                                      hasSubmitted ? 'Edit' : 'Score',
+                                      style: GoogleFonts.outfit(fontSize: 12),
+                                    ),
+                                  ),
+                                  if (hasSubmitted)
+                                    TextButton(
+                                      onPressed: () => context.go(
+                                          '/supervisor/result/${s.id}'),
+                                      child: Text(
+                                        'View',
+                                        style: GoogleFonts.outfit(
+                                          fontSize: 12,
+                                          color: AppTheme.supervisorColor,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ],
                           ),
                         );
                       },

@@ -105,6 +105,7 @@ class StudentResult {
   final double? supervisorScore;    // scaled /60
   final double? assessorAverage;   // average of assessors' scaled scores /40
   final double? finalScore;         // sum /100
+  final String? grade;              // A-F
   final bool isFinalized;
   final int assessorCount;
   final int assessorsSubmitted;
@@ -114,6 +115,7 @@ class StudentResult {
     this.supervisorScore,
     this.assessorAverage,
     this.finalScore,
+    this.grade,
     this.isFinalized = false,
     this.assessorCount = 0,
     this.assessorsSubmitted = 0,
@@ -125,6 +127,7 @@ class StudentResult {
       supervisorScore: (data['supervisorScore'] as num?)?.toDouble(),
       assessorAverage: (data['assessorAverage'] as num?)?.toDouble(),
       finalScore: (data['finalScore'] as num?)?.toDouble(),
+      grade: data['grade'] as String?,
       isFinalized: data['isFinalized'] ?? false,
       assessorCount: data['assessorCount'] ?? 0,
       assessorsSubmitted: data['assessorsSubmitted'] ?? 0,
@@ -135,6 +138,7 @@ class StudentResult {
         'supervisorScore': supervisorScore,
         'assessorAverage': assessorAverage,
         'finalScore': finalScore,
+        'grade': grade,
         'isFinalized': isFinalized,
         'assessorCount': assessorCount,
         'assessorsSubmitted': assessorsSubmitted,

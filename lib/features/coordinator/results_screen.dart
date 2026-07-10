@@ -194,11 +194,9 @@ class _ResultTile extends StatelessWidget {
     final finalScore = result?.finalScore;
     final isFinalized = result?.isFinalized ?? false;
 
-    final grade = finalScore != null
+    final grade = result?.grade ?? (finalScore != null
         ? ScoringService.gradeFromScore(finalScore)
-        : null;
-    final remark =
-        grade != null ? ScoringService.remarkFromGrade(grade) : null;
+        : null);
 
     final statusBadge = isFinalized
         ? SubmissionStatus.finalized
@@ -255,29 +253,8 @@ class _ResultTile extends StatelessWidget {
               const SizedBox(width: 8),
               _ScorePill(
                   label: 'Total', value: finalScore, max: 100, color: AppTheme.coordinatorColor),
-              if (grade != null) ...[
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: _gradeColor(grade).withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Column(
-                    children: [
-                      Text(grade,
-                          style: GoogleFonts.outfit(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w800,
-                            color: _gradeColor(grade),
-                          )),
-                      Text(remark!,
-                          style: GoogleFonts.outfit(
-                              fontSize: 10, color: _gradeColor(grade))),
-                    ],
-                  ),
-                ),
-              ],
+              const SizedBox(width: 8),
+              _GradePill(grade: grade),
             ],
           ),
 
@@ -315,6 +292,44 @@ class _ResultTile extends StatelessWidget {
             ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+class _GradePill extends StatelessWidget {
+  final String? grade;
+
+  const _GradePill({required this.grade});
+
+  @override
+  Widget build(BuildContext context) {
+    final color = grade != null ? _gradeColor(grade!) : Colors.grey;
+
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.06),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          children: [
+            Text(
+              grade ?? '--',
+              style: GoogleFonts.outfit(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: color,
+              ),
+            ),
+            Text(
+              'Grade',
+              style: GoogleFonts.outfit(fontSize: 10, color: Colors.grey[500]),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,7 +1,6 @@
 // lib/features/auth/login_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../core/providers.dart';
@@ -67,6 +66,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   // Logo / Icon
                   GestureDetector(
                     onLongPress: () async {
+                      final messenger = ScaffoldMessenger.of(context);
                       try {
                         final auth = ref.read(authServiceProvider);
                         try {
@@ -93,19 +93,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             rethrow;
                           }
                         }
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Admin created/restored: admin@msags.com / password123')),
-                          );
-                        }
+                        if (!context.mounted) return;
+                        messenger.showSnackBar(
+                          const SnackBar(content: Text('Admin created/restored: admin@msags.com / password123')),
+                        );
                       } catch (e) {
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text(getFriendlyError(e)),
-                                backgroundColor: AppTheme.error),
-                          );
-                        }
+                        if (!context.mounted) return;
+                        messenger.showSnackBar(
+                          SnackBar(
+                              content: Text(getFriendlyError(e)),
+                              backgroundColor: AppTheme.error),
+                        );
                       }
                     },
                     child: Container(

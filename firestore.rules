@@ -24,6 +24,20 @@ service cloud.firestore {
       return isAuthenticated() && getRole() == 'assessor';
     }
 
+    function studentData(studentId) {
+      return get(/databases/$(database)/documents/students/$(studentId)).data;
+    }
+
+    function isAssignedSupervisor(studentId) {
+      return isSupervisor() &&
+        studentData(studentId).supervisorId == request.auth.uid;
+    }
+
+    function isAssignedAssessor(studentId) {
+      return isAssessor() &&
+        request.auth.uid in studentData(studentId).assessorIds;
+    }
+
     // ── Users Collection ──────────────────────────────────────────────────────
     match /users/{uid} {
       // Users can read their own profile; coordinators can read all
@@ -48,42 +62,44 @@ service cloud.firestore {
 
     // ── Supervisor Evaluations ────────────────────────────────────────────────
     match /supervisor_evaluations/{studentId} {
-      // Coordinator: read all
-      allow read: if isCoordinator();
-      // Coordinator: unlock (set isLocked = false)
-      allow update: if isCoordinator();
+      // Coordinator: read all, unlock (set isLocked = false)
+      allow read, update: if isCoordinator();
 
-      // Supervisor: read and write only their own submission
-      // Cannot write if isLocked == true (re-submit protection)
-      allow read: if isSupervisor() &&
-        resource.data.supervisorId == request.auth.uid;
+      // Supervisor: read own submission (including when doc does not exist yet)
+      allow read: if isSupervisor() && (
+        resource == null || resource.data.supervisorId == request.auth.uid
+      );
 
+      // Supervisor: create first submission for assigned student
       allow create: if isSupervisor() &&
-        request.resource.data.supervisorId == request.auth.uid;
+        request.resource.data.supervisorId == request.auth.uid &&
+        isAssignedSupervisor(studentId);
 
+      // Supervisor: re-submit after unlock
       allow update: if isSupervisor() &&
         resource.data.supervisorId == request.auth.uid &&
         resource.data.isLocked == false;
 
-      // Assessors: cannot read supervisor evaluations
+      // Assessor: read supervisor score for recalculation (assigned students only)
+      allow read: if isAssignedAssessor(studentId);
     }
 
     // ── Assessor Evaluations ──────────────────────────────────────────────────
     match /assessor_evaluations/{studentId}/assessors/{assessorId} {
-      // Coordinator: read all
-      allow read: if isCoordinator();
-      // Coordinator: unlock
-      allow update: if isCoordinator();
+      // Coordinator: read all, unlock
+      allow read, update: if isCoordinator();
 
-      // Assessors: read/write only their own submission
+      // Assessor: read/write own submission (read works even when doc does not exist)
       allow read, create: if isAssessor() &&
-        request.auth.uid == assessorId;
+        request.auth.uid == assessorId &&
+        isAssignedAssessor(studentId);
 
       allow update: if isAssessor() &&
         request.auth.uid == assessorId &&
         resource.data.isLocked == false;
 
-      // Supervisors: cannot read individual assessor scores
+      // Supervisor and Assessor: read all assessor scores for recalculation (assigned students only)
+      allow read: if isAssignedSupervisor(studentId) || isAssignedAssessor(studentId);
     }
 
     // ── Results Collection ────────────────────────────────────────────────────
@@ -91,10 +107,12 @@ service cloud.firestore {
       // Coordinator: full read/write (finalize, unlock)
       allow read, write: if isCoordinator();
 
-      // Supervisor: read result for assigned students
-      allow read: if isSupervisor();
+      // Supervisor: read results for assigned students
+      allow read: if isAssignedSupervisor(studentId);
 
-      // Assessors: cannot read results
+      // Supervisor & assessor: update computed scores after submission
+      allow create, update: if isAssignedSupervisor(studentId) ||
+        isAssignedAssessor(studentId);
     }
   }
 }

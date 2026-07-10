@@ -23,7 +23,7 @@ class _SupervisorScoreEntryScreenState
   double _logbook = 0;
   double _technicalReport = 0;
   double _industrialReport = 0;
-  bool _loading = false;
+  bool _prepopulated = false;
   bool _submitting = false;
 
   double get _preview =>
@@ -74,11 +74,6 @@ class _SupervisorScoreEntryScreenState
 
   @override
   Widget build(BuildContext context) {
-    // Pre-load existing scores
-    if (_loading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Enter Supervisor Scores'),
@@ -99,18 +94,18 @@ class _SupervisorScoreEntryScreenState
             );
           }
           // Pre-populate if editing
-          if (snap.hasData && snap.data != null && !_loading) {
+          if (snap.hasData && snap.data != null && !_prepopulated) {
             final existing = snap.data!;
-            if (_logbook == 0 && _technicalReport == 0 && _industrialReport == 0) {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) {
                 setState(() {
                   _logbook = existing.logbook;
                   _technicalReport = existing.technicalReport;
                   _industrialReport = existing.industrialReport;
-                  _loading = true;
+                  _prepopulated = true;
                 });
-              });
-            }
+              }
+            });
           }
 
           return SingleChildScrollView(

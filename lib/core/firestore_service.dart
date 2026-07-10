@@ -187,17 +187,20 @@ class FirestoreService {
     }
 
     double? finalScore;
+    String? grade;
     if (supervisorScaled != null && assessorAvg != null) {
       finalScore = ScoringService.finalScore(
         supervisorTotal: supervisorScaled,
         assessorAveraged: assessorAvg,
       );
+      grade = ScoringService.gradeFromScore(finalScore);
     }
 
     await _results.doc(studentId).set({
       'supervisorScore': supervisorScaled,
       'assessorAverage': assessorAvg,
       'finalScore': finalScore,
+      'grade': grade,
       'assessorsSubmitted': assessorEvals.length,
     }, SetOptions(merge: true));
   }
