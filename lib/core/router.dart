@@ -6,6 +6,7 @@ import 'models/app_user.dart';
 
 // Feature screens
 import '../features/auth/login_screen.dart';
+import '../features/coordinator/all_students_screen.dart';
 import '../features/coordinator/coordinator_shell.dart';
 import '../features/coordinator/dashboard_screen.dart';
 import '../features/coordinator/register_student_screen.dart';
@@ -94,6 +95,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/coordinator/results',
             builder: (context, state) => const ResultsScreen(),
           ),
+          GoRoute(
+  path: '/coordinator/all-students',
+  builder: (context, state) => const CoordinatorAllStudentsScreen(),
+),
         ],
       ),
 

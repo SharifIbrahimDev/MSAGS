@@ -7,7 +7,7 @@ import '../../core/providers.dart';
 import '../../core/app_theme.dart';
 import '../../shared/widgets/app_header.dart';
 import '../../shared/widgets/score_card.dart';
-
+import '../../shared/widgets/student_tile.dart';
 class CoordinatorDashboardScreen extends ConsumerWidget {
   const CoordinatorDashboardScreen({super.key});
 
@@ -134,24 +134,32 @@ class CoordinatorDashboardScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 12),
 
-                        // Recent students
+                        // Recent students - Updated with View All button
                         if (students.isNotEmpty) ...[
                           const SizedBox(height: 16),
-                          Text('Recent Students',
-                              style: GoogleFonts.outfit(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                                color: const Color(0xFF1A1A2E),
-                              )),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Recent Students',
+                                  style: GoogleFonts.outfit(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    color: const Color(0xFF1A1A2E),
+                                  )),
+                              TextButton(
+                                onPressed: () => context.go('/coordinator/all-students'),
+                                child: const Text('View All'),
+                              ),
+                            ],
+                          ),
                           const SizedBox(height: 12),
-                          ...students.take(5).map((s) => _StudentTile(
-                                student: s,
-                                onAssignSupervisor: () => context.go(
-                                    '/coordinator/assign-supervisor/${s.id}'),
-                                onAssignAssessors: () => context.go(
-                                    '/coordinator/assign-assessors/${s.id}'),
-                              )),
-                        ],
+...students.take(5).map((s) => StudentTile(
+      student: s,
+      onAssignSupervisor: () =>
+          context.go('/coordinator/assign-supervisor/${s.id}'),
+      onAssignAssessors: () =>
+          context.go('/coordinator/assign-assessors/${s.id}'),
+    )),                        ],
                       ],
                     );
                   },
@@ -165,6 +173,7 @@ class CoordinatorDashboardScreen extends ConsumerWidget {
   }
 }
 
+// _ActionCard and _StudentTile remain unchanged
 class _ActionCard extends StatelessWidget {
   final IconData icon;
   final String title;

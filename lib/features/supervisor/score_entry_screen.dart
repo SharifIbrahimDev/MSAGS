@@ -25,6 +25,7 @@ class _SupervisorScoreEntryScreenState
   double _industrialReport = 0;
   bool _prepopulated = false;
   bool _submitting = false;
+  bool _isLocked = false; // NEW: tracks whether the existing submission is locked
 
   double get _preview =>
       ScoringService.supervisorScore(
@@ -93,7 +94,7 @@ class _SupervisorScoreEntryScreenState
               ),
             );
           }
-          // Pre-populate if editing
+          // Pre-populate if editing, and pick up the lock state
           if (snap.hasData && snap.data != null && !_prepopulated) {
             final existing = snap.data!;
             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -102,6 +103,7 @@ class _SupervisorScoreEntryScreenState
                   _logbook = existing.logbook;
                   _technicalReport = existing.technicalReport;
                   _industrialReport = existing.industrialReport;
+                  _isLocked = existing.isLocked;
                   _prepopulated = true;
                 });
               }
@@ -113,6 +115,33 @@ class _SupervisorScoreEntryScreenState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // NEW: locked-state banner, shown only once a submission exists and is locked
+                if (_isLocked) ...[
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.amber[50],
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.amber[300]!),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.lock_outline,
+                            color: Colors.amber[800], size: 18),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'This evaluation has already been submitted and is locked. Ask your coordinator to unlock it if you need to make changes.',
+                            style: GoogleFonts.outfit(
+                                fontSize: 13, color: Colors.amber[900]),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+
                 // Preview card
                 Container(
                   padding: const EdgeInsets.all(16),
@@ -159,6 +188,7 @@ class _SupervisorScoreEntryScreenState
                   value: _logbook,
                   max: 20,
                   color: AppTheme.supervisorColor,
+                  enabled: !_isLocked, // NEW
                   onChanged: (v) => setState(() => _logbook = v),
                 ),
                 const SizedBox(height: 20),
@@ -167,6 +197,7 @@ class _SupervisorScoreEntryScreenState
                   value: _technicalReport,
                   max: 20,
                   color: const Color(0xFF0D47A1),
+                  enabled: !_isLocked, // NEW
                   onChanged: (v) => setState(() => _technicalReport = v),
                 ),
                 const SizedBox(height: 20),
@@ -175,6 +206,7 @@ class _SupervisorScoreEntryScreenState
                   value: _industrialReport,
                   max: 20,
                   color: const Color(0xFF1565C0),
+                  enabled: !_isLocked, // NEW
                   onChanged: (v) => setState(() => _industrialReport = v),
                 ),
                 const SizedBox(height: 32),
@@ -183,16 +215,20 @@ class _SupervisorScoreEntryScreenState
                   height: 52,
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.supervisorColor),
-                    onPressed: _submitting ? null : _submit,
+                        backgroundColor:
+                            _isLocked ? Colors.grey : AppTheme.supervisorColor),
+                    // NEW: disabled while locked, not just while submitting
+                    onPressed: (_submitting || _isLocked) ? null : _submit,
                     icon: _submitting
                         ? const SizedBox(
                             width: 18,
                             height: 18,
                             child: CircularProgressIndicator(
                                 strokeWidth: 2, color: Colors.white))
-                        : const Icon(Icons.send_rounded),
-                    label: const Text('Submit Scores'),
+                        : Icon(_isLocked
+                            ? Icons.lock_outline
+                            : Icons.send_rounded),
+                    label: Text(_isLocked ? 'Submission Locked' : 'Submit Scores'),
                   ),
                 ),
               ],
@@ -209,6 +245,7 @@ class _ScoreSlider extends StatelessWidget {
   final double value;
   final double max;
   final Color color;
+  final bool enabled; // NEW
   final ValueChanged<double> onChanged;
 
   const _ScoreSlider({
@@ -216,17 +253,19 @@ class _ScoreSlider extends StatelessWidget {
     required this.value,
     required this.max,
     required this.color,
+    this.enabled = true, // NEW
     required this.onChanged,
   });
 
   @override
   Widget build(BuildContext context) {
+    final effectiveColor = enabled ? color : Colors.grey;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withValues(alpha: 0.15)),
+        border: Border.all(color: effectiveColor.withValues(alpha: 0.15)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -240,7 +279,7 @@ class _ScoreSlider extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
+                  color: effectiveColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -248,7 +287,7 @@ class _ScoreSlider extends StatelessWidget {
                   style: GoogleFonts.outfit(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: color,
+                    color: effectiveColor,
                   ),
                 ),
               ),
@@ -256,17 +295,18 @@ class _ScoreSlider extends StatelessWidget {
           ),
           SliderTheme(
             data: SliderThemeData(
-              activeTrackColor: color,
-              thumbColor: color,
-              inactiveTrackColor: color.withValues(alpha: 0.15),
-              overlayColor: color.withValues(alpha: 0.1),
+              activeTrackColor: effectiveColor,
+              thumbColor: effectiveColor,
+              inactiveTrackColor: effectiveColor.withValues(alpha: 0.15),
+              overlayColor: effectiveColor.withValues(alpha: 0.1),
             ),
             child: Slider(
               value: value,
               min: 0,
               max: max,
               divisions: max.toInt(),
-              onChanged: onChanged,
+              // NEW: locking disables the slider entirely
+              onChanged: enabled ? onChanged : null,
             ),
           ),
         ],

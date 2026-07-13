@@ -25,6 +25,7 @@ class _AssessorScoreEntryScreenState
   double _display = 0;
   bool _submitting = false;
   bool _prepopulated = false;
+  bool _isLocked = false; // NEW: tracks whether the existing submission is locked
 
   double get _preview => ScoringService.assessorScore(
         oral: _oral,
@@ -98,14 +99,16 @@ class _AssessorScoreEntryScreenState
                     ),
                   );
                 }
-                // Pre-populate with existing scores
+                // Pre-populate with existing scores, and pick up the lock state
                 if (snap.hasData && snap.data != null && !_prepopulated) {
+                  final existing = snap.data!;
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     if (mounted) {
                       setState(() {
-                        _oral = snap.data!.oral;
-                        _attitudinal = snap.data!.attitudinal;
-                        _display = snap.data!.display;
+                        _oral = existing.oral;
+                        _attitudinal = existing.attitudinal;
+                        _display = existing.display;
+                        _isLocked = existing.isLocked;
                         _prepopulated = true;
                       });
                     }
@@ -140,6 +143,33 @@ class _AssessorScoreEntryScreenState
                           ],
                         ),
                       ),
+
+                      // NEW: locked-state banner, shown only once a submission exists and is locked
+                      if (_isLocked) ...[
+                        const SizedBox(height: 12),
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.amber[50],
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.amber[300]!),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(Icons.lock_outline,
+                                  color: Colors.amber[800], size: 18),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'This assessment has already been submitted and is locked. Ask your coordinator to unlock it if you need to make changes.',
+                                  style: GoogleFonts.outfit(
+                                      fontSize: 13, color: Colors.amber[900]),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                       const SizedBox(height: 20),
 
                       // Preview card
@@ -187,6 +217,7 @@ class _AssessorScoreEntryScreenState
                         value: _oral,
                         max: 15,
                         color: AppTheme.assessorColor,
+                        enabled: !_isLocked, // NEW
                         onChanged: (v) => setState(() => _oral = v),
                       ),
                       const SizedBox(height: 16),
@@ -195,6 +226,7 @@ class _AssessorScoreEntryScreenState
                         value: _attitudinal,
                         max: 15,
                         color: const Color(0xFF2E7D32),
+                        enabled: !_isLocked, // NEW
                         onChanged: (v) => setState(() => _attitudinal = v),
                       ),
                       const SizedBox(height: 16),
@@ -203,6 +235,7 @@ class _AssessorScoreEntryScreenState
                         value: _display,
                         max: 10,
                         color: const Color(0xFF388E3C),
+                        enabled: !_isLocked, // NEW
                         onChanged: (v) => setState(() => _display = v),
                       ),
                       const SizedBox(height: 32),
@@ -211,16 +244,23 @@ class _AssessorScoreEntryScreenState
                         height: 52,
                         child: ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(
-                              backgroundColor: AppTheme.assessorColor),
-                          onPressed: _submitting ? null : _submit,
+                              backgroundColor: _isLocked
+                                  ? Colors.grey
+                                  : AppTheme.assessorColor),
+                          // NEW: disabled while locked, not just while submitting
+                          onPressed:
+                              (_submitting || _isLocked) ? null : _submit,
                           icon: _submitting
                               ? const SizedBox(
                                   width: 18,
                                   height: 18,
                                   child: CircularProgressIndicator(
                                       strokeWidth: 2, color: Colors.white))
-                              : const Icon(Icons.send_rounded),
-                          label: const Text('Submit Assessment'),
+                              : Icon(_isLocked
+                                  ? Icons.lock_outline
+                                  : Icons.send_rounded),
+                          label: Text(
+                              _isLocked ? 'Submission Locked' : 'Submit Assessment'),
                         ),
                       ),
                     ],
@@ -237,6 +277,7 @@ class _AssessorSlider extends StatelessWidget {
   final double value;
   final double max;
   final Color color;
+  final bool enabled; // NEW
   final ValueChanged<double> onChanged;
 
   const _AssessorSlider({
@@ -244,17 +285,19 @@ class _AssessorSlider extends StatelessWidget {
     required this.value,
     required this.max,
     required this.color,
+    this.enabled = true, // NEW
     required this.onChanged,
   });
 
   @override
   Widget build(BuildContext context) {
+    final effectiveColor = enabled ? color : Colors.grey;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withValues(alpha: 0.15)),
+        border: Border.all(color: effectiveColor.withValues(alpha: 0.15)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -269,7 +312,7 @@ class _AssessorSlider extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
+                  color: effectiveColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -277,7 +320,7 @@ class _AssessorSlider extends StatelessWidget {
                   style: GoogleFonts.outfit(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: color,
+                    color: effectiveColor,
                   ),
                 ),
               ),
@@ -285,17 +328,18 @@ class _AssessorSlider extends StatelessWidget {
           ),
           SliderTheme(
             data: SliderThemeData(
-              activeTrackColor: color,
-              thumbColor: color,
-              inactiveTrackColor: color.withValues(alpha: 0.15),
-              overlayColor: color.withValues(alpha: 0.1),
+              activeTrackColor: effectiveColor,
+              thumbColor: effectiveColor,
+              inactiveTrackColor: effectiveColor.withValues(alpha: 0.15),
+              overlayColor: effectiveColor.withValues(alpha: 0.1),
             ),
             child: Slider(
               value: value,
               min: 0,
               max: max,
               divisions: max.toInt(),
-              onChanged: onChanged,
+              // NEW: locking disables the slider entirely
+              onChanged: enabled ? onChanged : null,
             ),
           ),
         ],
