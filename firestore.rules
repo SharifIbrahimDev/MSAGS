@@ -63,7 +63,7 @@ service cloud.firestore {
     // ── Supervisor Evaluations ────────────────────────────────────────────────
     match /supervisor_evaluations/{studentId} {
       // Coordinator: read all, unlock (set isLocked = false)
-      allow read, update: if isCoordinator();
+      allow read, create, update: if isCoordinator();
 
       // Supervisor: read own submission (including when doc does not exist yet)
       allow read: if isSupervisor() && (
@@ -87,7 +87,7 @@ service cloud.firestore {
     // ── Assessor Evaluations ──────────────────────────────────────────────────
     match /assessor_evaluations/{studentId}/assessors/{assessorId} {
       // Coordinator: read all, unlock
-      allow read, update: if isCoordinator();
+      allow read, create, update: if isCoordinator();
 
       // Assessor: read/write own submission (read works even when doc does not exist)
       allow read, create: if isAssessor() &&
@@ -107,12 +107,13 @@ service cloud.firestore {
       // Coordinator: full read/write (finalize, unlock)
       allow read, write: if isCoordinator();
 
-      // Supervisor: read results for assigned students
-      allow read: if isAssignedSupervisor(studentId);
-
-      // Supervisor & assessor: update computed scores after submission
-      allow create, update: if isAssignedSupervisor(studentId) ||
+      // Supervisor & assessor: read results for assigned students only
+      allow read: if isAssignedSupervisor(studentId) ||
         isAssignedAssessor(studentId);
+
+      // FIXED: Only coordinator can create/update results
+      // (Assessor/Supervisor submissions trigger app-side calculation,
+      // then coordinator writes the finalized result via server-side function)
     }
   }
 }
