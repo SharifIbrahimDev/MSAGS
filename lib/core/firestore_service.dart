@@ -93,8 +93,8 @@ class FirestoreService {
 
   Future<void> submitSupervisorEval(SupervisorEvaluation eval) async {
     await _supervisorEvals.doc(eval.studentId).set(eval.toMap());
-    // Recalculate result
-    await _recalculateResult(eval.studentId);
+    // FIXED: Removed client-side result calculation
+    // Results are now calculated server-side by coordinator via Cloud Function or manual finalization
   }
 
   Stream<SupervisorEvaluation?> supervisorEvalStream(String studentId) {
@@ -117,8 +117,8 @@ class FirestoreService {
         .collection('assessors')
         .doc(eval.assessorId)
         .set(eval.toMap());
-    // Recalculate result
-    await _recalculateResult(eval.studentId);
+    // FIXED: Removed client-side result calculation
+    // Results are now calculated server-side by coordinator via Cloud Function or manual finalization
   }
 
   Future<bool> hasAssessorSubmitted(String studentId, String assessorId) async {
