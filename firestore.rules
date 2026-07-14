@@ -30,12 +30,12 @@ service cloud.firestore {
 
     function isAssignedSupervisor(studentId) {
       return isSupervisor() &&
-        studentData(studentId).supervisorId == request.auth.uid;
+        studentData(studentId).get('supervisorId', '') == request.auth.uid;
     }
 
     function isAssignedAssessor(studentId) {
       return isAssessor() &&
-        request.auth.uid in studentData(studentId).assessorIds;
+        request.auth.uid in studentData(studentId).get('assessorIds', []);
     }
 
     // ── Users Collection ──────────────────────────────────────────────────────
@@ -65,10 +65,9 @@ service cloud.firestore {
       // Coordinator: read all, unlock (set isLocked = false)
       allow read, create, update: if isCoordinator();
 
-      // Supervisor: read own submission (including when doc does not exist yet)
-      allow read: if isSupervisor() && (
-        resource == null || resource.data.supervisorId == request.auth.uid
-      );
+      // Supervisor: read assigned student's evaluation
+      // (Using isAssignedSupervisor avoids the 'resource == null' issue with snapshot listeners)
+      allow read: if isAssignedSupervisor(studentId);
 
       // Supervisor: create first submission for assigned student
       allow create: if isSupervisor() &&
@@ -77,8 +76,9 @@ service cloud.firestore {
 
       // Supervisor: re-submit after unlock
       allow update: if isSupervisor() &&
-        resource.data.supervisorId == request.auth.uid &&
-        resource.data.isLocked == false;
+        request.resource.data.supervisorId == request.auth.uid &&
+        resource.data.isLocked == false &&
+        isAssignedSupervisor(studentId);
 
       // Assessor: read supervisor score for recalculation (assigned students only)
       allow read: if isAssignedAssessor(studentId);
@@ -89,16 +89,17 @@ service cloud.firestore {
       // Coordinator: read all, unlock
       allow read, create, update: if isCoordinator();
 
-      // Assessor: read/write own submission (read works even when doc does not exist)
-      allow read, create: if isAssessor() &&
+      // Assessor: create/update own submission
+      allow create: if isAssessor() &&
         request.auth.uid == assessorId &&
         isAssignedAssessor(studentId);
 
       allow update: if isAssessor() &&
         request.auth.uid == assessorId &&
-        resource.data.isLocked == false;
+        resource.data.isLocked == false &&
+        isAssignedAssessor(studentId);
 
-      // Supervisor and Assessor: read all assessor scores for recalculation (assigned students only)
+      // Assessor & Supervisor: read all assessor scores for recalculation (assigned students only)
       allow read: if isAssignedSupervisor(studentId) || isAssignedAssessor(studentId);
     }
 
