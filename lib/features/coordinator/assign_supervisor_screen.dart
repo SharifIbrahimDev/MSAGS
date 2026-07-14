@@ -104,56 +104,55 @@ class _AssignSupervisorScreenState
           return Column(
             children: [
               Expanded(
-                child: RadioGroup<String>(
-                  groupValue: _selectedSupervisorId,
-                  onChanged: (v) => setState(() => _selectedSupervisorId = v),
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: supervisors.length,
-                    itemBuilder: (context, i) {
-                      final sup = supervisors[i];
-                      final selected = _selectedSupervisorId == sup.uid;
-                      return AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        margin: const EdgeInsets.only(bottom: 10),
-                        decoration: BoxDecoration(
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: supervisors.length,
+                  itemBuilder: (context, i) {
+                    final sup = supervisors[i];
+                    final selected = _selectedSupervisorId == sup.uid;
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      margin: const EdgeInsets.only(bottom: 10),
+                      decoration: BoxDecoration(
+                        color: selected
+                            ? AppTheme.supervisorColor.withValues(alpha: 0.08)
+                            : Colors.white,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
                           color: selected
-                              ? AppTheme.supervisorColor.withValues(alpha: 0.08)
-                              : Colors.white,
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(
-                            color: selected
-                                ? AppTheme.supervisorColor
-                                : Colors.grey[200]!,
-                            width: selected ? 2 : 1,
-                          ),
+                              ? AppTheme.supervisorColor
+                              : Colors.grey[200]!,
+                          width: selected ? 2 : 1,
                         ),
-                        child: RadioListTile<String>(
-                          value: sup.uid,
-                          activeColor: AppTheme.supervisorColor,
-                          title: Text(sup.name,
-                              style: GoogleFonts.outfit(
-                                  fontWeight: FontWeight.w600)),
-                          subtitle: Text(sup.email,
-                              style:
-                                  GoogleFonts.outfit(color: Colors.grey[500])),
-                          secondary: CircleAvatar(
-                            backgroundColor:
-                                AppTheme.supervisorColor.withValues(alpha: 0.1),
-                            child: Text(
-                              sup.name.isNotEmpty
-                                  ? sup.name[0].toUpperCase()
-                                  : '?',
-                              style: GoogleFonts.outfit(
-                                color: AppTheme.supervisorColor,
-                                fontWeight: FontWeight.w700,
-                              ),
+                      ),
+                      child: RadioListTile<String>(
+                        value: sup.uid,
+                        groupValue: _selectedSupervisorId,
+                        onChanged: (v) =>
+                            setState(() => _selectedSupervisorId = v),
+                        activeColor: AppTheme.supervisorColor,
+                        title: Text(sup.name,
+                            style: GoogleFonts.outfit(
+                                fontWeight: FontWeight.w600)),
+                        subtitle: Text(sup.email,
+                            style:
+                                GoogleFonts.outfit(color: Colors.grey[500])),
+                        secondary: CircleAvatar(
+                          backgroundColor:
+                              AppTheme.supervisorColor.withValues(alpha: 0.1),
+                          child: Text(
+                            sup.name.isNotEmpty
+                                ? sup.name[0].toUpperCase()
+                                : '?',
+                            style: GoogleFonts.outfit(
+                              color: AppTheme.supervisorColor,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
                 ),
               ),
               Padding(

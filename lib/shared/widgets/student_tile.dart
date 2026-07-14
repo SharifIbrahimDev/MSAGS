@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/app_theme.dart';
@@ -102,17 +102,7 @@ class StudentTile extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 12),
 
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton.icon(
-              onPressed: () =>
-                  context.go('/coordinator/student/${student.id}'),
-              icon: const Icon(Icons.visibility_outlined, size: 18),
-              label: const Text('View Profile'),
-            ),
-          ),
         ],
       ),
     );

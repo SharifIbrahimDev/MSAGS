@@ -120,8 +120,8 @@ class _RegisterUserScreenState extends ConsumerState<RegisterUserScreen> {
                 ),
                 child: Text(
                   _selectedRole == UserRole.supervisor
-                      ? 'Supervisors grade: Logbook (25), Technical Report (25), Industrial Report (25) → 60% of final score'
-                      : 'Assessors grade: Oral (20), Attitudinal (20), Display (10) → 40% of final score',
+                      ? 'Supervisors grade: Logbook (20), Technical Report (20), Industrial Report (20) → 60% of final score'
+                      : 'Assessors grade: Oral (15), Attitudinal (15), Display (10) → 40% of final score',
                   style: GoogleFonts.outfit(fontSize: 13, color: _roleColor),
                 ),
               ),

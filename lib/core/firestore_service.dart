@@ -48,6 +48,12 @@ class FirestoreService {
     return ref.id;
   }
 
+  Future<Student?> getStudent(String studentId) async {
+    final doc = await _students.doc(studentId).get();
+    if (!doc.exists) return null;
+    return Student.fromMap(doc.id, doc.data() as Map<String, dynamic>);
+  }
+
   Stream<List<Student>> studentsStream() {
     return _students.orderBy('name').snapshots().map((snap) => snap.docs
         .map((d) => Student.fromMap(d.id, d.data() as Map<String, dynamic>))
@@ -93,8 +99,8 @@ class FirestoreService {
 
   Future<void> submitSupervisorEval(SupervisorEvaluation eval) async {
     await _supervisorEvals.doc(eval.studentId).set(eval.toMap());
-    // FIXED: Removed client-side result calculation
-    // Results are now calculated server-side by coordinator via Cloud Function or manual finalization
+    // Recalculate result immediately so the results collection stays current
+    await _recalculateResult(eval.studentId);
   }
 
   Stream<SupervisorEvaluation?> supervisorEvalStream(String studentId) {
@@ -117,8 +123,8 @@ class FirestoreService {
         .collection('assessors')
         .doc(eval.assessorId)
         .set(eval.toMap());
-    // FIXED: Removed client-side result calculation
-    // Results are now calculated server-side by coordinator via Cloud Function or manual finalization
+    // Recalculate result immediately so the results collection stays current
+    await _recalculateResult(eval.studentId);
   }
 
   Future<bool> hasAssessorSubmitted(String studentId, String assessorId) async {
@@ -224,10 +230,21 @@ class FirestoreService {
 
   Future<void> unlockResult(String studentId) async {
     await _results.doc(studentId).update({'isFinalized': false});
-    // Also unlock supervisor eval
+
+    // Unlock supervisor eval
     final supDoc = await _supervisorEvals.doc(studentId).get();
     if (supDoc.exists) {
       await _supervisorEvals.doc(studentId).update({'isLocked': false});
+    }
+
+    // Unlock all assigned assessor evals
+    final studentDoc = await _students.doc(studentId).get();
+    if (studentDoc.exists) {
+      final data = studentDoc.data() as Map<String, dynamic>;
+      final assessorIds = List<String>.from(data['assessorIds'] ?? []);
+      for (final assessorId in assessorIds) {
+        await unlockAssessorEval(studentId, assessorId);
+      }
     }
   }
 }

@@ -2,10 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../../core/providers.dart';
 import '../../core/app_theme.dart';
-import '../../core/models/app_user.dart';
 import '../../shared/utils/error_utils.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -64,59 +62,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // Logo / Icon
-                  GestureDetector(
-                    onLongPress: () async {
-                      final messenger = ScaffoldMessenger.of(context);
-                      try {
-                        final auth = ref.read(authServiceProvider);
-                        try {
-                          await auth.createUser(
-                            name: 'Admin Coordinator',
-                            email: 'admin@msags.com',
-                            password: 'password123',
-                            role: UserRole.coordinator,
-                          );
-                        } catch (e) {
-                          if (e.toString().contains('email-already-in-use')) {
-                            // Already exists in auth, just create the firestore doc
-                            await auth.signIn('admin@msags.com', 'password123');
-                            final uid = FirebaseAuth.instance.currentUser!.uid;
-                            await ref.read(firestoreServiceProvider).createUser(
-                                  AppUser(
-                                    uid: uid,
-                                    name: 'Admin Coordinator',
-                                    email: 'admin@msags.com',
-                                    role: UserRole.coordinator,
-                                  ),
-                                );
-                          } else {
-                            rethrow;
-                          }
-                        }
-                        if (!context.mounted) return;
-                        messenger.showSnackBar(
-                          const SnackBar(content: Text('Admin created/restored: admin@msags.com / password123')),
-                        );
-                      } catch (e) {
-                        if (!context.mounted) return;
-                        messenger.showSnackBar(
-                          SnackBar(
-                              content: Text(getFriendlyError(e)),
-                              backgroundColor: AppTheme.error),
-                        );
-                      }
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.15),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.school_rounded,
-                        size: 60,
-                        color: Colors.white,
-                      ),
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.15),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.school_rounded,
+                      size: 60,
+                      color: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 24),
