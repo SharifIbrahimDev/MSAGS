@@ -107,13 +107,9 @@ service cloud.firestore {
       // Coordinator: full read/write (finalize, unlock)
       allow read, write: if isCoordinator();
 
-      // Supervisor & assessor: read results for assigned students only
-      allow read: if isAssignedSupervisor(studentId) ||
+      // Supervisor & assessor: read/write results for assigned students to allow real-time recalculation
+      allow read, write: if isAssignedSupervisor(studentId) ||
         isAssignedAssessor(studentId);
-
-      // FIXED: Only coordinator can create/update results
-      // (Assessor/Supervisor submissions trigger app-side calculation,
-      // then coordinator writes the finalized result via server-side function)
     }
   }
 }
