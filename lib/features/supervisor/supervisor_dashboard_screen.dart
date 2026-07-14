@@ -109,6 +109,16 @@ class SupervisorDashboardScreen extends ConsumerWidget {
                                 ? SubmissionStatus.submitted
                                 : SubmissionStatus.unlocked;
 
+                        // Label logic:
+                        //  - Not yet submitted → "Score"
+                        //  - Submitted & locked → "View" (read-only; score screen shows lock banner)
+                        //  - Submitted & unlocked → "Edit"
+                        final scoreLabel = !hasSubmitted
+                            ? 'Score'
+                            : isLocked
+                                ? 'View'
+                                : 'Edit';
+
                         return Container(
                           margin: const EdgeInsets.only(bottom: 12),
                           padding: const EdgeInsets.all(16),
@@ -175,13 +185,13 @@ class SupervisorDashboardScreen extends ConsumerWidget {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
+                                  // Always allow navigation — the score screen
+                                  // itself enforces the lock (read-only banner).
                                   TextButton(
-                                    onPressed: (isLocked && hasSubmitted)
-                                        ? null
-                                        : () => context.go(
-                                            '/supervisor/score/${s.id}'),
+                                    onPressed: () => context.go(
+                                        '/supervisor/score/${s.id}'),
                                     child: Text(
-                                      hasSubmitted ? 'Edit' : 'Score',
+                                      scoreLabel,
                                       style: GoogleFonts.outfit(fontSize: 12),
                                     ),
                                   ),
@@ -190,7 +200,7 @@ class SupervisorDashboardScreen extends ConsumerWidget {
                                       onPressed: () => context.go(
                                           '/supervisor/result/${s.id}'),
                                       child: Text(
-                                        'View',
+                                        'Result',
                                         style: GoogleFonts.outfit(
                                           fontSize: 12,
                                           color: AppTheme.supervisorColor,

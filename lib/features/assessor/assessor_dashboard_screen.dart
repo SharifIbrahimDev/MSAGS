@@ -111,7 +111,15 @@ class AssessorDashboardScreen extends ConsumerWidget {
                                 ? SubmissionStatus.submitted
                                 : SubmissionStatus.unlocked;
 
-                        final canSubmit = !hasSubmitted || !isLocked;
+                        // Label logic:
+                        //  - Not yet submitted → "Score"
+                        //  - Submitted & locked → "View" (score screen is read-only)
+                        //  - Submitted & unlocked → "Edit"
+                        final actionLabel = !hasSubmitted
+                            ? 'Score'
+                            : isLocked
+                                ? 'View'
+                                : 'Edit';
 
                         return Container(
                           margin: const EdgeInsets.only(bottom: 12),
@@ -163,15 +171,15 @@ class AssessorDashboardScreen extends ConsumerWidget {
                                 ),
                               ),
                               const SizedBox(width: 8),
+                              // Always allow navigation — the score screen
+                              // itself enforces the lock (read-only + banner).
                               ElevatedButton(
-                                onPressed: canSubmit
-                                    ? () => context.go(
-                                        '/assessor/score/${s.id}')
-                                    : null,
+                                onPressed: () =>
+                                    context.go('/assessor/score/${s.id}'),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: canSubmit
-                                      ? AppTheme.assessorColor
-                                      : Colors.grey[300],
+                                  backgroundColor: isLocked && hasSubmitted
+                                      ? Colors.grey[400]
+                                      : AppTheme.assessorColor,
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 14, vertical: 10),
                                   textStyle: GoogleFonts.outfit(fontSize: 12),
@@ -179,7 +187,7 @@ class AssessorDashboardScreen extends ConsumerWidget {
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                 ),
-                                child: Text(hasSubmitted ? 'Edit' : 'Score'),
+                                child: Text(actionLabel),
                               ),
                             ],
                           ),
