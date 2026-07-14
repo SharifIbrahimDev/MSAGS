@@ -60,8 +60,16 @@ class AssessorDashboardScreen extends ConsumerWidget {
             child: StreamBuilder(
               stream: fs.studentsForAssessor(currentUser.uid),
               builder: (context, snap) {
-                if (!snap.hasData) {
+                if (snap.hasError) {
+                  return Center(
+                    child: Text('Error loading students: ${snap.error}'),
+                  );
+                }
+                if (snap.connectionState == ConnectionState.waiting && !snap.hasData) {
                   return const Center(child: CircularProgressIndicator());
+                }
+                if (!snap.hasData) {
+                  return const Center(child: Text('No students assigned yet.'));
                 }
                 final students = snap.data!;
 

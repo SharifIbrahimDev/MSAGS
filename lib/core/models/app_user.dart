@@ -22,7 +22,7 @@ class AppUser {
       email: data['email'] ?? '',
       role: UserRole.values.firstWhere(
         (r) => r.name == data['role'],
-        orElse: () => UserRole.assessor,
+        orElse: () => throw Exception('Unknown user role: ${data['role']}'),
       ),
     );
   }

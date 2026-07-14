@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/providers.dart';
 import '../../core/models/student.dart';
+import '../../core/models/evaluation.dart';
 import '../../core/app_theme.dart';
 import '../../shared/widgets/app_header.dart';
 import '../../shared/widgets/status_badge.dart';
@@ -96,7 +97,7 @@ class MonitorScreen extends ConsumerWidget {
 
 class _MonitorTile extends StatelessWidget {
   final Student student;
-  final dynamic result;
+  final EvaluationResult? result;
 
   const _MonitorTile({required this.student, required this.result});
 

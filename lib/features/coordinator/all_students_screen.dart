@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/models/student.dart';
 import '../../core/providers.dart';
 import '../../shared/widgets/app_header.dart';
 import '../../shared/widgets/student_tile.dart';
@@ -31,7 +32,7 @@ class CoordinatorAllStudentsScreen extends ConsumerWidget {
             ],
           ),
           Expanded(
-            child: StreamBuilder<List<dynamic>>(
+            child: StreamBuilder<List<Student>>(
               stream: fs.studentsStream(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
