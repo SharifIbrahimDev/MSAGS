@@ -97,7 +97,7 @@ class MonitorScreen extends ConsumerWidget {
 
 class _MonitorTile extends StatelessWidget {
   final Student student;
-  final EvaluationResult? result;
+  final StudentResult? result;
 
   const _MonitorTile({required this.student, required this.result});
 
