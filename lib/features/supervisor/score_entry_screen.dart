@@ -186,7 +186,7 @@ class _SupervisorScoreEntryScreenState
                 _ScoreSlider(
                   label: 'Logbook',
                   value: _logbook,
-                  max: 20,
+                  max: ScoringService.maxLogbook,
                   color: AppTheme.supervisorColor,
                   enabled: !_isLocked, // NEW
                   onChanged: (v) => setState(() => _logbook = v),
@@ -195,7 +195,7 @@ class _SupervisorScoreEntryScreenState
                 _ScoreSlider(
                   label: 'Technical Report',
                   value: _technicalReport,
-                  max: 20,
+                  max: ScoringService.maxTechnicalReport,
                   color: const Color(0xFF0D47A1),
                   enabled: !_isLocked, // NEW
                   onChanged: (v) => setState(() => _technicalReport = v),
@@ -204,7 +204,7 @@ class _SupervisorScoreEntryScreenState
                 _ScoreSlider(
                   label: 'Industrial Report',
                   value: _industrialReport,
-                  max: 20,
+                  max: ScoringService.maxIndustrialReport,
                   color: const Color(0xFF1565C0),
                   enabled: !_isLocked, // NEW
                   onChanged: (v) => setState(() => _industrialReport = v),

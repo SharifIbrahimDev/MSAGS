@@ -4,11 +4,11 @@ import 'package:msags/core/scoring_service.dart';
 
 void main() {
   // ─── Supervisor Score Tests ─────────────────────────────────────────────────
-  group('ScoringService — Supervisor Score (max 60 = 20+20+20)', () {
+  group('ScoringService — Supervisor Score (max 60 = 25+25+10)', () {
     test('max marks → 60', () {
       expect(
         ScoringService.supervisorScore(
-            logbook: 20, technicalReport: 20, industrialReport: 20),
+            logbook: 25, technicalReport: 25, industrialReport: 10),
         equals(60.0),
       );
     });
@@ -24,7 +24,7 @@ void main() {
     test('half marks → 30', () {
       expect(
         ScoringService.supervisorScore(
-            logbook: 10, technicalReport: 10, industrialReport: 10),
+            logbook: 12.5, technicalReport: 12.5, industrialReport: 5),
         equals(30.0),
       );
     });
@@ -32,15 +32,15 @@ void main() {
     test('unequal marks are summed directly', () {
       expect(
         ScoringService.supervisorScore(
-            logbook: 18, technicalReport: 15, industrialReport: 12),
+            logbook: 20, technicalReport: 18, industrialReport: 7),
         equals(45.0),
       );
     });
 
-    test('Figma default values (15+15+15) → 45', () {
+    test('sample default values (20+20+5) → 45', () {
       expect(
         ScoringService.supervisorScore(
-            logbook: 15, technicalReport: 15, industrialReport: 15),
+            logbook: 20, technicalReport: 20, industrialReport: 5),
         equals(45.0),
       );
     });

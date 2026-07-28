@@ -5,7 +5,7 @@ class SupervisorEvaluation {
   final String supervisorId;
   final double logbook;        // 0–25
   final double technicalReport; // 0–25
-  final double industrialReport; // 0–25
+  final double industrialReport; // 0–10
   final DateTime submittedAt;
   final bool isLocked;
 
@@ -20,7 +20,7 @@ class SupervisorEvaluation {
   });
 
   /// Supervisor total score scaled to 60
-  /// Raw max = 20+20+20 = 60, so scaledScore = rawSum directly
+  /// Raw max = 25+25+10 = 60, so scaledScore = rawSum directly
   double get scaledScore => logbook + technicalReport + industrialReport;
 
   factory SupervisorEvaluation.fromMap(String studentId, Map<String, dynamic> data) {

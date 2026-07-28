@@ -3,10 +3,10 @@
 /// Pure Dart scoring calculations — matching the Figma MSAGS prototype exactly.
 class ScoringService {
   // ─── Supervisor Max Values ──────────────────────────────────────────────────
-  static const double maxLogbook = 20;
-  static const double maxTechnicalReport = 20;
-  static const double maxIndustrialReport = 20;
-  static const double maxSupervisor = 60; // 20+20+20
+  static const double maxLogbook = 25;
+  static const double maxTechnicalReport = 25;
+  static const double maxIndustrialReport = 10;
+  static const double maxSupervisor = 60; // 25+25+10
 
   // ─── Assessor Max Values ────────────────────────────────────────────────────
   static const double maxOral = 15;
@@ -15,7 +15,7 @@ class ScoringService {
   static const double maxAssessor = 40; // 15+15+10
 
   /// Supervisor raw marks → total score (max 60)
-  /// Raw max = 20+20+20 = 60 (no scaling needed)
+  /// Raw max = 25+25+10 = 60 (no scaling needed)
   static double supervisorScore({
     required double logbook,
     required double technicalReport,
