@@ -1,4 +1,5 @@
 // lib/core/models/evaluation.dart
+import '../scoring_service.dart';
 
 class SupervisorEvaluation {
   final String studentId;
@@ -24,12 +25,16 @@ class SupervisorEvaluation {
   double get scaledScore => logbook + technicalReport + industrialReport;
 
   factory SupervisorEvaluation.fromMap(String studentId, Map<String, dynamic> data) {
+    final rawLogbook = (data['logbook'] ?? 0).toDouble();
+    final rawTech = (data['technicalReport'] ?? 0).toDouble();
+    final rawInd = (data['industrialReport'] ?? 0).toDouble();
+
     return SupervisorEvaluation(
       studentId: studentId,
       supervisorId: data['supervisorId'] ?? '',
-      logbook: (data['logbook'] ?? 0).toDouble(),
-      technicalReport: (data['technicalReport'] ?? 0).toDouble(),
-      industrialReport: (data['industrialReport'] ?? 0).toDouble(),
+      logbook: rawLogbook.clamp(0.0, ScoringService.maxLogbook),
+      technicalReport: rawTech.clamp(0.0, ScoringService.maxTechnicalReport),
+      industrialReport: rawInd.clamp(0.0, ScoringService.maxIndustrialReport),
       submittedAt: data['submittedAt'] != null
           ? (data['submittedAt'] as dynamic).toDate()
           : DateTime.now(),
@@ -51,8 +56,8 @@ class SupervisorEvaluation {
 class AssessorEvaluation {
   final String studentId;
   final String assessorId;
-  final double oral;        // 0–20
-  final double attitudinal; // 0–20
+  final double oral;        // 0–15
+  final double attitudinal; // 0–15
   final double display;     // 0–10
   final DateTime submittedAt;
   final bool isLocked;
@@ -76,12 +81,16 @@ class AssessorEvaluation {
 
   factory AssessorEvaluation.fromMap(
       String studentId, String assessorId, Map<String, dynamic> data) {
+    final rawOral = (data['oral'] ?? 0).toDouble();
+    final rawAtt = (data['attitudinal'] ?? 0).toDouble();
+    final rawDisp = (data['display'] ?? 0).toDouble();
+
     return AssessorEvaluation(
       studentId: studentId,
       assessorId: assessorId,
-      oral: (data['oral'] ?? 0).toDouble(),
-      attitudinal: (data['attitudinal'] ?? 0).toDouble(),
-      display: (data['display'] ?? 0).toDouble(),
+      oral: rawOral.clamp(0.0, ScoringService.maxOral),
+      attitudinal: rawAtt.clamp(0.0, ScoringService.maxAttitude),
+      display: rawDisp.clamp(0.0, ScoringService.maxDressing),
       submittedAt: data['submittedAt'] != null
           ? (data['submittedAt'] as dynamic).toDate()
           : DateTime.now(),

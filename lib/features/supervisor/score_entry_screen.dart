@@ -100,9 +100,9 @@ class _SupervisorScoreEntryScreenState
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (mounted) {
                 setState(() {
-                  _logbook = existing.logbook;
-                  _technicalReport = existing.technicalReport;
-                  _industrialReport = existing.industrialReport;
+                  _logbook = existing.logbook.clamp(0.0, ScoringService.maxLogbook);
+                  _technicalReport = existing.technicalReport.clamp(0.0, ScoringService.maxTechnicalReport);
+                  _industrialReport = existing.industrialReport.clamp(0.0, ScoringService.maxIndustrialReport);
                   _isLocked = existing.isLocked;
                   _prepopulated = true;
                 });
@@ -259,6 +259,7 @@ class _ScoreSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final effectiveValue = value.clamp(0.0, max);
     final effectiveColor = enabled ? color : Colors.grey;
     return Container(
       padding: const EdgeInsets.all(16),
@@ -283,7 +284,7 @@ class _ScoreSlider extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  '${value.toStringAsFixed(0)} / ${max.toStringAsFixed(0)}',
+                  '${effectiveValue.toStringAsFixed(0)} / ${max.toStringAsFixed(0)}',
                   style: GoogleFonts.outfit(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
@@ -301,7 +302,7 @@ class _ScoreSlider extends StatelessWidget {
               overlayColor: effectiveColor.withValues(alpha: 0.1),
             ),
             child: Slider(
-              value: value,
+              value: effectiveValue,
               min: 0,
               max: max,
               divisions: max.toInt(),

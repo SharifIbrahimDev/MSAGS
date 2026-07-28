@@ -22,7 +22,8 @@ class ScoreCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasScore = score != null;
-    final percentage = hasScore ? (score! / maxScore) : 0.0;
+    final clampedScore = hasScore ? score!.clamp(0.0, maxScore) : null;
+    final percentage = clampedScore != null ? (clampedScore / maxScore) : 0.0;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -46,7 +47,7 @@ class ScoreCard extends StatelessWidget {
           Row(
             children: [
               Text(
-                hasScore ? score!.toStringAsFixed(0) : '--',
+                clampedScore != null ? clampedScore.toStringAsFixed(0) : '--',
                 style: GoogleFonts.inter(
                   fontSize: 24,
                   fontWeight: FontWeight.w700,
