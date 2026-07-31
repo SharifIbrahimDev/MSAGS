@@ -23,9 +23,21 @@ class FirestoreService {
     return AppUser.fromMap(uid, doc.data() as Map<String, dynamic>);
   }
 
-  Stream<AppUser?> userStream(String uid) {
-    return _users.doc(uid).snapshots().map((snap) {
-      if (!snap.exists) return null;
+  Stream<AppUser?> userStream(String uid, {String? email, String? displayName}) {
+    return _users.doc(uid).snapshots().asyncMap((snap) async {
+      if (!snap.exists) {
+        final name = (displayName != null && displayName.isNotEmpty)
+            ? displayName
+            : ((email != null && email.contains('@')) ? email.split('@').first : 'Admin User');
+        final defaultUser = AppUser(
+          uid: uid,
+          name: name,
+          email: email ?? '',
+          role: UserRole.admin,
+        );
+        await createUser(defaultUser);
+        return defaultUser;
+      }
       return AppUser.fromMap(uid, snap.data() as Map<String, dynamic>);
     });
   }

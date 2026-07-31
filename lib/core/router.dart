@@ -91,6 +91,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         if (appUser == null) return null; // role still loading
         switch (appUser.role) {
           case UserRole.coordinator:
+          case UserRole.admin:
             return '/coordinator';
           case UserRole.supervisor:
             return '/supervisor';
@@ -106,7 +107,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const LoginScreen(),
       ),
 
-      // ── Coordinator Shell ──────────────────────────────────────────────────
+      // ── Coordinator / Admin Shell ─────────────────────────────────────────
       ShellRoute(
         builder: (context, state, child) => CoordinatorShell(child: child),
         routes: [

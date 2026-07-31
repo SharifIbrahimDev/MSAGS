@@ -22,7 +22,7 @@ final currentUserProvider = StreamProvider<AppUser?>((ref) {
   return authState.when(
     data: (user) {
       if (user == null) return Stream.value(null);
-      return firestoreService.userStream(user.uid);
+      return firestoreService.userStream(user.uid, email: user.email, displayName: user.displayName);
     },
     loading: () => Stream.value(null),
     error: (_, _) => Stream.value(null),

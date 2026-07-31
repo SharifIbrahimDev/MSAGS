@@ -1,6 +1,6 @@
 // lib/core/models/app_user.dart
 
-enum UserRole { coordinator, supervisor, assessor }
+enum UserRole { coordinator, supervisor, assessor, admin }
 
 class AppUser {
   final String uid;
@@ -16,14 +16,26 @@ class AppUser {
   });
 
   factory AppUser.fromMap(String uid, Map<String, dynamic> data) {
+    final rawRole = (data['role'] ?? '').toString().trim().toLowerCase();
+    UserRole role;
+    if (rawRole == 'admin' || rawRole == 'administrator') {
+      role = UserRole.admin;
+    } else if (rawRole == 'coordinator') {
+      role = UserRole.coordinator;
+    } else if (rawRole == 'supervisor') {
+      role = UserRole.supervisor;
+    } else if (rawRole == 'assessor') {
+      role = UserRole.assessor;
+    } else {
+      // Safe fallback to coordinator instead of throwing exception
+      role = UserRole.coordinator;
+    }
+
     return AppUser(
       uid: uid,
       name: data['name'] ?? '',
       email: data['email'] ?? '',
-      role: UserRole.values.firstWhere(
-        (r) => r.name == data['role'],
-        orElse: () => throw Exception('Unknown user role: ${data['role']}'),
-      ),
+      role: role,
     );
   }
 
