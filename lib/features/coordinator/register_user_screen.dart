@@ -1,5 +1,6 @@
 // lib/features/coordinator/register_user_screen.dart
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/providers.dart';
@@ -67,8 +68,6 @@ class _RegisterUserScreenState extends ConsumerState<RegisterUserScreen> {
     }
   }
 
-  // removed _friendlyError
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -130,12 +129,21 @@ class _RegisterUserScreenState extends ConsumerState<RegisterUserScreen> {
               TextFormField(
                 key: const ValueKey('reg_user_name'),
                 controller: _nameCtrl,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s.-]')),
+                ],
                 decoration: const InputDecoration(
                   labelText: 'Full Name',
                   prefixIcon: Icon(Icons.person_outline),
                 ),
-                validator: (v) =>
-                    (v?.isEmpty ?? true) ? 'Name is required' : null,
+                validator: (v) {
+                  if (v == null || v.trim().isEmpty) return 'Name is required';
+                  if (RegExp(r'[0-9]').hasMatch(v)) return 'Name cannot contain numbers';
+                  if (!RegExp(r'^[a-zA-Z\s.-]+$').hasMatch(v.trim())) {
+                    return 'Name must contain only alphabetic letters';
+                  }
+                  return null;
+                },
               ),
               const SizedBox(height: 16),
               TextFormField(
