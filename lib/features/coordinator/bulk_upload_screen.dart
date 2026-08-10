@@ -15,6 +15,7 @@ import '../../core/models/app_user.dart';
 import '../../core/models/student.dart';
 import '../../core/providers.dart';
 import '../../shared/utils/error_utils.dart';
+import '../../shared/utils/download_helper.dart';
 
 class BulkUploadScreen extends ConsumerStatefulWidget {
   const BulkUploadScreen({super.key});
@@ -45,6 +46,16 @@ class _BulkUploadScreenState extends ConsumerState<BulkUploadScreen> {
   int _supervisorAssignedCount = 0;
   final List<String> _logs = [];
   final Set<String> _unmatchedSupervisors = {};
+
+  void _downloadTemplate() {
+    const templateContent =
+'''Name, Matric No., Supervisors
+Ayodele Jerry Ayodeji, KASU/23/CSC/1001, Mr. Abubakar Mu'azu
+Umar Faruk Ibrahim, KASU/23/CSC/1023, 
+Augustine Ameh David, KASU/23/CSC/1003, 
+EMMANUEL PHOEBE KANDI, KASU/22/CSC/1146, Mr. Dams Gabriel''';
+    downloadCsvTemplate(templateContent, 'siwes_student_allocation_template.csv');
+  }
 
   @override
   void dispose() {
@@ -367,15 +378,35 @@ class _BulkUploadScreenState extends ConsumerState<BulkUploadScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Icon(Icons.info_outline, color: AppTheme.coordinatorColor),
-                        const SizedBox(width: 8),
-                        Text(
-                          'CSV Upload Guidelines',
-                          style: GoogleFonts.outfit(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey[800],
+                        Row(
+                          children: [
+                            const Icon(Icons.info_outline, color: AppTheme.coordinatorColor),
+                            const SizedBox(width: 8),
+                            Text(
+                              'CSV Upload Guidelines',
+                              style: GoogleFonts.outfit(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey[800],
+                              ),
+                            ),
+                          ],
+                        ),
+                        TextButton.icon(
+                          onPressed: _downloadTemplate,
+                          icon: const Icon(Icons.download_rounded, size: 18),
+                          label: Text(
+                            'Download Template',
+                            style: GoogleFonts.outfit(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          style: TextButton.styleFrom(
+                            foregroundColor: AppTheme.secondary,
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                           ),
                         ),
                       ],
