@@ -7,6 +7,7 @@ import '../../core/providers.dart';
 import '../../core/models/app_user.dart';
 import '../../core/app_theme.dart';
 import '../../shared/utils/error_utils.dart';
+import '../../core/app_constants.dart';
 
 class RegisterUserScreen extends ConsumerStatefulWidget {
   const RegisterUserScreen({super.key});
@@ -21,6 +22,7 @@ class _RegisterUserScreenState extends ConsumerState<RegisterUserScreen> {
   final _emailCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
   UserRole _selectedRole = UserRole.supervisor;
+  String? _selectedName;
   bool _obscure = true;
   bool _loading = false;
 
@@ -53,6 +55,9 @@ class _RegisterUserScreenState extends ConsumerState<RegisterUserScreen> {
         _nameCtrl.clear();
         _emailCtrl.clear();
         _passwordCtrl.clear();
+        setState(() {
+          _selectedName = null;
+        });
       }
     } catch (e) {
       if (mounted) {
@@ -126,25 +131,56 @@ class _RegisterUserScreenState extends ConsumerState<RegisterUserScreen> {
               ),
               const SizedBox(height: 24),
 
-              TextFormField(
-                key: const ValueKey('reg_user_name'),
-                controller: _nameCtrl,
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s.-]')),
-                ],
+              DropdownButtonFormField<String>(
+                key: const ValueKey('reg_user_name_dropdown'),
+                value: _selectedName,
                 decoration: const InputDecoration(
-                  labelText: 'Full Name',
+                  labelText: 'Select Name',
                   prefixIcon: Icon(Icons.person_outline),
                 ),
+                items: AppConstants.predefinedStaffNames.map((name) {
+                  return DropdownMenuItem<String>(
+                    value: name,
+                    child: Text(name),
+                  );
+                }).toList(),
+                onChanged: (val) {
+                  setState(() {
+                    _selectedName = val;
+                    if (val == 'Other') {
+                      _nameCtrl.clear();
+                    } else if (val != null) {
+                      _nameCtrl.text = val;
+                    }
+                  });
+                },
                 validator: (v) {
-                  if (v == null || v.trim().isEmpty) return 'Name is required';
-                  if (RegExp(r'[0-9]').hasMatch(v)) return 'Name cannot contain numbers';
-                  if (!RegExp(r'^[a-zA-Z\s.-]+$').hasMatch(v.trim())) {
-                    return 'Name must contain only alphabetic letters';
-                  }
+                  if (v == null || v.isEmpty) return 'Please select a name';
                   return null;
                 },
               ),
+              if (_selectedName == 'Other') ...[
+                const SizedBox(height: 16),
+                TextFormField(
+                  key: const ValueKey('reg_user_name'),
+                  controller: _nameCtrl,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s.-]')),
+                  ],
+                  decoration: const InputDecoration(
+                    labelText: 'Custom Full Name',
+                    prefixIcon: Icon(Icons.person_outline),
+                  ),
+                  validator: (v) {
+                    if (v == null || v.trim().isEmpty) return 'Name is required';
+                    if (RegExp(r'[0-9]').hasMatch(v)) return 'Name cannot contain numbers';
+                    if (!RegExp(r'^[a-zA-Z\s.-]+$').hasMatch(v.trim())) {
+                      return 'Name must contain only alphabetic letters';
+                    }
+                    return null;
+                  },
+                ),
+              ],
               const SizedBox(height: 16),
               TextFormField(
                 key: const ValueKey('reg_user_email'),

@@ -18,4 +18,22 @@ class AppConstants {
     'Cloudsoft computing LTD',
     'Other',
   ];
+
+  static const List<String> predefinedStaffNames = [
+    'Mr Anas Saminu',
+    'Mr Habibu yahaya M',
+    'Mr Abubakar Muazu',
+    'Mr Dams Gabriel',
+    'Mr Awwal Babajo',
+    'Mr Ashiru Simon',
+    'Mr Ashiru Abdullahi',
+    'Mrs Hajara Idris',
+    'Mrs Hamidatu Abdulkadir',
+    'Mrs Rukayya Bala',
+    'Mr Abdullahi Tanimu',
+    'Mr Suleiman Aliyu',
+    'Mr Buhari Kamil',
+    'Mr Shamsu Umar',
+    'Other',
+  ];
 }
