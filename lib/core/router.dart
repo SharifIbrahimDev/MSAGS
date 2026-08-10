@@ -14,6 +14,7 @@ import '../features/coordinator/coordinator_shell.dart';
 import '../features/coordinator/dashboard_screen.dart';
 import '../features/coordinator/register_student_screen.dart';
 import '../features/coordinator/register_user_screen.dart';
+import '../features/coordinator/bulk_upload_screen.dart';
 import '../features/coordinator/assign_supervisor_screen.dart';
 import '../features/coordinator/assign_assessors_screen.dart';
 import '../features/coordinator/monitor_screen.dart';
@@ -122,6 +123,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/coordinator/register-user',
             builder: (context, state) => const RegisterUserScreen(),
+          ),
+          GoRoute(
+            path: '/coordinator/bulk-upload',
+            builder: (context, state) => const BulkUploadScreen(),
           ),
           GoRoute(
             path: '/coordinator/assign-supervisor/:studentId',

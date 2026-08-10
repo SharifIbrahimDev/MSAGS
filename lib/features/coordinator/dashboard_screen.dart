@@ -133,6 +133,14 @@ class CoordinatorDashboardScreen extends ConsumerWidget {
                           onTap: () => context.go('/coordinator/register-user'),
                         ),
                         const SizedBox(height: 12),
+                        _ActionCard(
+                          icon: Icons.upload_file_rounded,
+                          title: 'Bulk Upload Students',
+                          subtitle: 'Import student allocation list from CSV',
+                          color: AppTheme.secondary,
+                          onTap: () => context.go('/coordinator/bulk-upload'),
+                        ),
+                        const SizedBox(height: 12),
 
                         // Recent students - Updated with View All button
                         if (students.isNotEmpty) ...[
