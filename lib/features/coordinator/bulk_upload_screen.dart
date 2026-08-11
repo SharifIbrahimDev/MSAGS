@@ -721,7 +721,7 @@ EMMANUEL PHOEBE KANDI, KASU/22/CSC/1146, Mr. Dams Gabriel''';
                         ),
                         const SizedBox(height: 10),
                         Container(
-                          maxHeight: 180,
+                          constraints: const BoxConstraints(maxHeight: 180),
                           width: double.infinity,
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
