@@ -1,8 +1,8 @@
 // lib/features/coordinator/bulk_upload_screen.dart
 
 import 'dart:convert';
-import 'dart:io' as io;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../shared/utils/file_reader_helper.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
@@ -149,9 +149,8 @@ EMMANUEL PHOEBE KANDI, KASU/22/CSC/1146, Mr. Dams Gabriel''';
       try {
         if (_pickedFile!.bytes != null) {
           rawContent = utf8.decode(_pickedFile!.bytes!);
-        } else if (!kIsWeb && _pickedFile!.path != null) {
-          final file = io.File(_pickedFile!.path!);
-          rawContent = await file.readAsString();
+        } else {
+          rawContent = await readPlatformFileAsString(_pickedFile!);
         }
       } catch (e) {
         if (mounted) {
