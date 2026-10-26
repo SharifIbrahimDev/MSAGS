@@ -1,4 +1,4 @@
-// lib/features/supervisor/score_entry_screen.dart
+﻿// lib/features/supervisor/score_entry_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,6 +8,7 @@ import '../../core/models/evaluation.dart';
 import '../../core/scoring_service.dart';
 import '../../core/app_theme.dart';
 import '../../shared/utils/error_utils.dart';
+import '../../shared/widgets/assessment_sheet.dart';
 
 class SupervisorScoreEntryScreen extends ConsumerStatefulWidget {
   final String studentId;
@@ -182,32 +183,43 @@ class _SupervisorScoreEntryScreenState
                 ),
                 const SizedBox(height: 28),
 
-                // Score sliders
-                _ScoreSlider(
-                  label: 'Logbook',
-                  value: _logbook,
-                  max: ScoringService.maxLogbook,
-                  color: AppTheme.supervisorColor,
-                  enabled: !_isLocked, // NEW
-                  onChanged: (v) => setState(() => _logbook = v),
-                ),
-                const SizedBox(height: 20),
-                _ScoreSlider(
-                  label: 'Technical Report',
-                  value: _technicalReport,
-                  max: ScoringService.maxTechnicalReport,
-                  color: const Color(0xFF0D47A1),
-                  enabled: !_isLocked, // NEW
-                  onChanged: (v) => setState(() => _technicalReport = v),
-                ),
-                const SizedBox(height: 20),
-                _ScoreSlider(
-                  label: 'Industrial Report',
-                  value: _industrialReport,
-                  max: ScoringService.maxIndustrialReport,
-                  color: const Color(0xFF1565C0),
-                  enabled: !_isLocked, // NEW
-                  onChanged: (v) => setState(() => _industrialReport = v),
+                // One-page logbook assessment table
+                AssessmentSheet(
+                  accent: AppTheme.supervisorColor,
+                  locked: _isLocked,
+                  rows: [
+                    AssessmentRow(
+                      description: 'Log Book Record',
+                      max: ScoringService.maxLogbook,
+                      value: _logbook,
+                      editable: true,
+                      onChanged: (v) => setState(() => _logbook = v),
+                    ),
+                    AssessmentRow(
+                      description: 'Technical Report',
+                      max: ScoringService.maxTechnicalReport,
+                      value: _technicalReport,
+                      editable: true,
+                      onChanged: (v) => setState(() => _technicalReport = v),
+                    ),
+                    const AssessmentRow(
+                      description: 'Attitudinal Observations',
+                      max: ScoringService.maxAttitude,
+                      ownerLabel: 'Assessor',
+                    ),
+                    AssessmentRow(
+                      description: 'Employers Report',
+                      max: ScoringService.maxIndustrialReport,
+                      value: _industrialReport,
+                      editable: true,
+                      onChanged: (v) => setState(() => _industrialReport = v),
+                    ),
+                    const AssessmentRow(
+                      description: 'Presentation (Oral)',
+                      max: ScoringService.maxOral,
+                      ownerLabel: 'Assessor',
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 32),
 
@@ -240,78 +252,3 @@ class _SupervisorScoreEntryScreenState
   }
 }
 
-class _ScoreSlider extends StatelessWidget {
-  final String label;
-  final double value;
-  final double max;
-  final Color color;
-  final bool enabled; // NEW
-  final ValueChanged<double> onChanged;
-
-  const _ScoreSlider({
-    required this.label,
-    required this.value,
-    required this.max,
-    required this.color,
-    this.enabled = true, // NEW
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final effectiveValue = value.clamp(0.0, max);
-    final effectiveColor = enabled ? color : Colors.grey;
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: effectiveColor.withValues(alpha: 0.15)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(label,
-                  style: GoogleFonts.outfit(
-                      fontSize: 15, fontWeight: FontWeight.w600)),
-              const Spacer(),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                decoration: BoxDecoration(
-                  color: effectiveColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  '${effectiveValue.toStringAsFixed(0)} / ${max.toStringAsFixed(0)}',
-                  style: GoogleFonts.outfit(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: effectiveColor,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SliderTheme(
-            data: SliderThemeData(
-              activeTrackColor: effectiveColor,
-              thumbColor: effectiveColor,
-              inactiveTrackColor: effectiveColor.withValues(alpha: 0.15),
-              overlayColor: effectiveColor.withValues(alpha: 0.1),
-            ),
-            child: Slider(
-              value: effectiveValue,
-              min: 0,
-              max: max,
-              divisions: max.toInt(),
-              // NEW: locking disables the slider entirely
-              onChanged: enabled ? onChanged : null,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

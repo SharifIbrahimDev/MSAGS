@@ -39,20 +39,20 @@ class StudentTile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// Student Name
+          /// Matric No (bold, on top)
           Text(
-            student.name,
+            (student.matricNo as String).toUpperCase(),
             style: GoogleFonts.outfit(
               fontSize: 16,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w800,
             ),
           ),
 
           const SizedBox(height: 4),
 
-          /// Matric No & Department
+          /// Student Name & Department
           Text(
-            '${student.matricNo} • ${student.department}',
+            '${student.name} • ${student.department}',
             style: GoogleFonts.outfit(
               fontSize: 13,
               color: Colors.grey.shade600,

@@ -157,11 +157,11 @@ class AssessorDashboardScreen extends ConsumerWidget {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(s.name,
+                                    Text(s.matricNo.toUpperCase(),
                                         style: GoogleFonts.outfit(
                                             fontSize: 15,
-                                            fontWeight: FontWeight.w600)),
-                                    Text('${s.matricNo} • ${s.department}',
+                                            fontWeight: FontWeight.w800)),
+                                    Text('${s.name} • ${s.department}',
                                         style: GoogleFonts.outfit(
                                             fontSize: 12,
                                             color: Colors.grey[500])),

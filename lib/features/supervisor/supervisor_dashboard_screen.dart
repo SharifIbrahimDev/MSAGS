@@ -161,14 +161,14 @@ class SupervisorDashboardScreen extends ConsumerWidget {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          s.name,
+                                          s.matricNo.toUpperCase(),
                                           style: GoogleFonts.outfit(
-                                            fontWeight: FontWeight.w600,
+                                            fontWeight: FontWeight.w800,
                                           ),
                                         ),
                                         const SizedBox(height: 2),
                                         Text(
-                                          '${s.matricNo} • ${s.department}',
+                                          '${s.name} • ${s.department}',
                                           style: GoogleFonts.outfit(
                                             fontSize: 12,
                                             color: Colors.grey[500],

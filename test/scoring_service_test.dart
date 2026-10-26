@@ -47,39 +47,39 @@ void main() {
   });
 
   // ─── Assessor Score Tests ───────────────────────────────────────────────────
-  group('ScoringService — Assessor Score (max 40 = 15+15+10)', () {
+  group('ScoringService — Assessor Score (max 40 = 15 attitude + 25 oral)', () {
     test('max marks → 40', () {
       expect(
-        ScoringService.assessorScore(oral: 15, attitude: 15, dressing: 10),
+        ScoringService.assessorScore(oral: 25, attitude: 15),
         equals(40.0),
       );
     });
 
     test('zero marks → 0', () {
       expect(
-        ScoringService.assessorScore(oral: 0, attitude: 0, dressing: 0),
+        ScoringService.assessorScore(oral: 0, attitude: 0),
         equals(0.0),
       );
     });
 
     test('half marks → 20', () {
       expect(
-        ScoringService.assessorScore(oral: 7.5, attitude: 7.5, dressing: 5),
+        ScoringService.assessorScore(oral: 12.5, attitude: 7.5),
         equals(20.0),
       );
     });
 
-    test('Figma default values (12+12+8) → 32', () {
+    test('20 + 12 → 32', () {
       expect(
-        ScoringService.assessorScore(oral: 12, attitude: 12, dressing: 8),
+        ScoringService.assessorScore(oral: 20, attitude: 12),
         equals(32.0),
       );
     });
 
-    test('max oral + zero others → 15', () {
+    test('max oral + zero attitude → 25', () {
       expect(
-        ScoringService.assessorScore(oral: 15, attitude: 0, dressing: 0),
-        equals(15.0),
+        ScoringService.assessorScore(oral: 25, attitude: 0),
+        equals(25.0),
       );
     });
   });

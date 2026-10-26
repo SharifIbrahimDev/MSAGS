@@ -8,6 +8,7 @@ import '../../core/models/evaluation.dart';
 import '../../core/scoring_service.dart';
 import '../../core/app_theme.dart';
 import '../../shared/utils/error_utils.dart';
+import '../../shared/widgets/assessment_sheet.dart';
 
 class AssessorScoreEntryScreen extends ConsumerStatefulWidget {
   final String studentId;
@@ -22,7 +23,6 @@ class _AssessorScoreEntryScreenState
     extends ConsumerState<AssessorScoreEntryScreen> {
   double _oral = 0;
   double _attitudinal = 0;
-  double _display = 0;
   bool _submitting = false;
   bool _prepopulated = false;
   bool _isLocked = false; // NEW: tracks whether the existing submission is locked
@@ -30,7 +30,6 @@ class _AssessorScoreEntryScreenState
   double get _preview => ScoringService.assessorScore(
         oral: _oral,
         attitude: _attitudinal,
-        dressing: _display,
       );
 
   Future<void> _submit() async {
@@ -44,7 +43,6 @@ class _AssessorScoreEntryScreenState
         assessorId: currentUser.uid,
         oral: _oral,
         attitudinal: _attitudinal,
-        display: _display,
         submittedAt: DateTime.now(),
         isLocked: true,
       );
@@ -107,7 +105,6 @@ class _AssessorScoreEntryScreenState
                       setState(() {
                         _oral = existing.oral;
                         _attitudinal = existing.attitudinal;
-                        _display = existing.display;
                         _isLocked = existing.isLocked;
                         _prepopulated = true;
                       });
@@ -212,31 +209,41 @@ class _AssessorScoreEntryScreenState
                       ),
                       const SizedBox(height: 28),
 
-                      _AssessorSlider(
-                        label: 'Oral Presentation',
-                        value: _oral,
-                        max: 15,
-                        color: AppTheme.assessorColor,
-                        enabled: !_isLocked, // NEW
-                        onChanged: (v) => setState(() => _oral = v),
-                      ),
-                      const SizedBox(height: 16),
-                      _AssessorSlider(
-                        label: 'Attitude & Comportment',
-                        value: _attitudinal,
-                        max: 15,
-                        color: const Color(0xFF2E7D32),
-                        enabled: !_isLocked, // NEW
-                        onChanged: (v) => setState(() => _attitudinal = v),
-                      ),
-                      const SizedBox(height: 16),
-                      _AssessorSlider(
-                        label: 'Dressing & Appearance',
-                        value: _display,
-                        max: 10,
-                        color: const Color(0xFF388E3C),
-                        enabled: !_isLocked, // NEW
-                        onChanged: (v) => setState(() => _display = v),
+                      AssessmentSheet(
+                        accent: AppTheme.assessorColor,
+                        locked: _isLocked,
+                        rows: [
+                          const AssessmentRow(
+                            description: 'Log Book Record',
+                            max: ScoringService.maxLogbook,
+                            ownerLabel: 'Supervisor',
+                          ),
+                          const AssessmentRow(
+                            description: 'Technical Report',
+                            max: ScoringService.maxTechnicalReport,
+                            ownerLabel: 'Supervisor',
+                          ),
+                          AssessmentRow(
+                            description: 'Attitudinal Observations',
+                            max: ScoringService.maxAttitude,
+                            value: _attitudinal,
+                            editable: true,
+                            onChanged: (v) =>
+                                setState(() => _attitudinal = v),
+                          ),
+                          const AssessmentRow(
+                            description: 'Employers Report',
+                            max: ScoringService.maxIndustrialReport,
+                            ownerLabel: 'Supervisor',
+                          ),
+                          AssessmentRow(
+                            description: 'Presentation (Oral)',
+                            max: ScoringService.maxOral,
+                            value: _oral,
+                            editable: true,
+                            onChanged: (v) => setState(() => _oral = v),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 32),
 
@@ -272,78 +279,3 @@ class _AssessorScoreEntryScreenState
   }
 }
 
-class _AssessorSlider extends StatelessWidget {
-  final String label;
-  final double value;
-  final double max;
-  final Color color;
-  final bool enabled; // NEW
-  final ValueChanged<double> onChanged;
-
-  const _AssessorSlider({
-    required this.label,
-    required this.value,
-    required this.max,
-    required this.color,
-    this.enabled = true, // NEW
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final effectiveColor = enabled ? color : Colors.grey;
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: effectiveColor.withValues(alpha: 0.15)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(label,
-                  style: GoogleFonts.outfit(
-                      fontSize: 15, fontWeight: FontWeight.w600)),
-              const Spacer(),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                decoration: BoxDecoration(
-                  color: effectiveColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  '${value.toStringAsFixed(0)} / ${max.toStringAsFixed(0)}',
-                  style: GoogleFonts.outfit(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: effectiveColor,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SliderTheme(
-            data: SliderThemeData(
-              activeTrackColor: effectiveColor,
-              thumbColor: effectiveColor,
-              inactiveTrackColor: effectiveColor.withValues(alpha: 0.15),
-              overlayColor: effectiveColor.withValues(alpha: 0.1),
-            ),
-            child: Slider(
-              value: value,
-              min: 0,
-              max: max,
-              divisions: max.toInt(),
-              // NEW: locking disables the slider entirely
-              onChanged: enabled ? onChanged : null,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}

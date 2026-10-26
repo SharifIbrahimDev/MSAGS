@@ -56,9 +56,8 @@ class SupervisorEvaluation {
 class AssessorEvaluation {
   final String studentId;
   final String assessorId;
-  final double oral;        // 0–15
-  final double attitudinal; // 0–15
-  final double display;     // 0–10
+  final double oral;        // 0–25 Presentation (Oral)
+  final double attitudinal; // 0–15 Attitudinal Observation
   final DateTime submittedAt;
   final bool isLocked;
 
@@ -67,30 +66,26 @@ class AssessorEvaluation {
     required this.assessorId,
     required this.oral,
     required this.attitudinal,
-    required this.display,
     required this.submittedAt,
     this.isLocked = true,
   });
 
   /// Assessor raw total (out of 40)
-  /// Raw max = 15+15+10 = 40, so scaledScore = rawSum directly
-  double get rawTotal => oral + attitudinal + display;
+  double get rawTotal => oral + attitudinal;
 
   /// Assessor score (max 40)
-  double get scaledScore => oral + attitudinal + display;
+  double get scaledScore => oral + attitudinal;
 
   factory AssessorEvaluation.fromMap(
       String studentId, String assessorId, Map<String, dynamic> data) {
     final rawOral = (data['oral'] ?? 0).toDouble();
     final rawAtt = (data['attitudinal'] ?? 0).toDouble();
-    final rawDisp = (data['display'] ?? 0).toDouble();
 
     return AssessorEvaluation(
       studentId: studentId,
       assessorId: assessorId,
       oral: rawOral.clamp(0.0, ScoringService.maxOral),
       attitudinal: rawAtt.clamp(0.0, ScoringService.maxAttitude),
-      display: rawDisp.clamp(0.0, ScoringService.maxDressing),
       submittedAt: data['submittedAt'] != null
           ? (data['submittedAt'] as dynamic).toDate()
           : DateTime.now(),
@@ -102,7 +97,6 @@ class AssessorEvaluation {
         'assessorId': assessorId,
         'oral': oral,
         'attitudinal': attitudinal,
-        'display': display,
         'submittedAt': submittedAt,
         'isLocked': isLocked,
         'scaledScore': scaledScore,

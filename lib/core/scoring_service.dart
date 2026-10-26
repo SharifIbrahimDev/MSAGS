@@ -9,10 +9,9 @@ class ScoringService {
   static const double maxSupervisor = 60; // 25+25+10
 
   // ─── Assessor Max Values ────────────────────────────────────────────────────
-  static const double maxOral = 15;
   static const double maxAttitude = 15;
-  static const double maxDressing = 10;
-  static const double maxAssessor = 40; // 15+15+10
+  static const double maxOral = 25;
+  static const double maxAssessor = 40; // 15+25
 
   /// Supervisor raw marks → total score (max 60)
   /// Raw max = 25+25+10 = 60 (no scaling needed)
@@ -31,18 +30,15 @@ class ScoringService {
   }
 
   /// Single assessor raw marks → total score (max 40)
-  /// Raw max = 15+15+10 = 40 (no scaling needed)
+  /// Raw max = 15 (attitude) + 25 (oral) = 40 (no scaling needed)
   static double assessorScore({
     required double oral,
     required double attitude,
-    required double dressing,
   }) {
     assert(oral >= 0 && oral <= maxOral, 'Oral must be 0–$maxOral');
     assert(attitude >= 0 && attitude <= maxAttitude,
         'Attitude must be 0–$maxAttitude');
-    assert(dressing >= 0 && dressing <= maxDressing,
-        'Dressing must be 0–$maxDressing');
-    return oral + attitude + dressing;
+    return oral + attitude;
   }
 
   /// Average of all assessors' scores

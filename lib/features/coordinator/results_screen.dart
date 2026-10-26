@@ -227,12 +227,12 @@ class _ResultTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Text(matricNo.toUpperCase(),
+                        style: GoogleFonts.outfit(
+                            fontSize: 16, fontWeight: FontWeight.w800)),
                     Text(studentName,
                         style: GoogleFonts.outfit(
-                            fontSize: 16, fontWeight: FontWeight.w700)),
-                    Text(matricNo,
-                        style: GoogleFonts.outfit(
-                            fontSize: 13, color: Colors.grey[500])),
+                            fontSize: 13, color: Colors.grey[600])),
                   ],
                 ),
               ),

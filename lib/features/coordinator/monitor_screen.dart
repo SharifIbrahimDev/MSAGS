@@ -149,10 +149,10 @@ class _MonitorTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(student.name,
+                    Text(student.matricNo.toUpperCase(),
                         style: GoogleFonts.outfit(
-                            fontSize: 15, fontWeight: FontWeight.w600)),
-                    Text('${student.matricNo} • ${student.department}',
+                            fontSize: 15, fontWeight: FontWeight.w800)),
+                    Text('${student.name} • ${student.department}',
                         style: GoogleFonts.outfit(
                             fontSize: 12, color: Colors.grey[500])),
                   ],
