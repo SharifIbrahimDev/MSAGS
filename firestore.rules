@@ -13,7 +13,8 @@ service cloud.firestore {
     }
 
     function isCoordinator() {
-      return isAuthenticated() && getRole() == 'coordinator';
+      return isAuthenticated() &&
+        getRole() in ['coordinator', 'admin', 'administrator'];
     }
 
     function isSupervisor() {
